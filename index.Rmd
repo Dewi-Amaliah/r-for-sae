@@ -502,11 +502,8 @@ background-size: cover
 # LATIHAN
 
 
+<strong>HELP!!!</strong> Siti diminta oleh rekan kerjanya untuk membuat tulisan mengenai <strong>Hustle Culture</strong> di Indonesia. Ia diminta untuk menghitung jumlah penduduk bekerja yang memiliki pekerjaan tambahan berdasarkan status perkawinan dan provinsi.
 
-
-<div class="alert alert-info">
-  <strong>HELP!!!</strong> Siti diminta oleh rekan kerjanya untuk membuat tulisan mengenai <strong>Hustle Culture</strong> di Indonesia. Ia diminta untuk menghitung jumlah penduduk bekerja yang memiliki pekerjaan tambahan berdasarkan status perkawinan dan provinsi.
-</div>
 
 
 
