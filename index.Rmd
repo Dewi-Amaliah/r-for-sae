@@ -494,6 +494,33 @@ lulusan_sd_longer
 ```
 
 ---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# LATIHAN
+
+
+
+
+<div class="alert alert-info">
+  <strong>HELP!!!</strong> Siti diminta oleh rekan kerjanya untuk membuat tulisan mengenai <strong>Hustle Culture</strong> di Indonesia. Ia diminta untuk menghitung jumlah penduduk bekerja yang memiliki pekerjaan tambahan berdasarkan status perkawinan dan provinsi.
+</div>
+
+
+
+**Oleh karena itu:** 
+1. Bantulah Siti untuk menyediakan data tersebut. 
+2. Selain itu, bantu pula Siti untuk mengetahui provinsi mana dengan Hustle Culture paling mencolok.
+
+**BONUS**
+
+Apa yang harus Siti lakukan jika ingin menjawab pertanyaan: apakah orang yang sudah menikah cenderung ingin cepat kaya? 
+
+
+
+---
 class: left, middle
 
 background-image:url(images/tks.png)
