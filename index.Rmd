@@ -425,8 +425,7 @@ background-size: cover
 
 - Misalnya kita ingin melakukan agregasi data dari level individu -> kabupaten 
 - Dapat dilakukan dengan *grouping* dan *summarise*
-- Contoh kasus: mengetahui jumlah lulusan SD di seluruh kabupaten di Indonesia berdasarkan jenis kelamin
-- Perlu memperhatikan variabel penimbang
+- Contoh kasus: mengetahui sampel lulusan SD di seluruh kabupaten di Indonesia berdasarkan jenis kelamin
 
 ```{r}
 
@@ -435,11 +434,38 @@ lulusan_sd <- sak_leveled %>%
   filter(ijazah == "SD setara") %>%
   # group berdasarkan jenis kelamin dan kabupaten 
   group_by(kode_kab, jk) %>%
-  summarise(jumlah = sum(penimbang, na.rm = TRUE)) %>%
+  count() %>%
   ungroup()
 
 lulusan_sd
 ```
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+**PERHATIAN!!!** Apabila menggunakan data survey, untuk agregasi pada tingkat yg lebih tinggi, misalnya kabupaten, maka perlu memperhatikan penimbang. Penimbang di sini adalah level kabupaten.
+
+```{r}
+library(survey)
+
+sd_samp <- sak_leveled %>%
+  #filter lulusan SD terlebih dahulu
+  filter(ijazah == "SD setara")
+
+svy.dat <- svydesign(ids=~1, data=sd_samp,
+                     weights=sd_samp$penimbang)
+
+lulusan_sd_pop <- svytable(~kode_kab + jk, 
+                     design=svy.dat) %>%
+  as.data.frame()
+
+lulusan_sd_pop
+```
+
+
 
 ---
 class: left
@@ -460,7 +486,7 @@ kode_kab <- sak %>%
   mutate(KODE_KABB = as.factor(KODE_KABB)) %>%
   distinct(.keep_all = TRUE)
 
-lulusan_sd_joined <- left_join(kode_kab, lulusan_sd, by = c("KODE_KABB" = "kode_kab"))
+lulusan_sd_joined <- left_join(kode_kab, lulusan_sd_pop, by = c("KODE_KABB" = "kode_kab"))
 
 lulusan_sd_joined
 ```
@@ -478,8 +504,7 @@ background-size: cover
 
 ```{r}
 lulusan_sd_wider <- lulusan_sd_joined %>%
-  pivot_wider( names_from = "jk", values_from = "jumlah") %>%
-  select(-`NA`)
+  pivot_wider( names_from = "jk", values_from = "Freq")
 
 lulusan_sd_wider
 ```
@@ -503,17 +528,13 @@ background-size: cover
 # LATIHAN
 
 
-<strong>HELP!!!</strong> Siti diminta oleh rekan kerjanya untuk membuat tulisan mengenai <strong>Hustle Culture</strong> di Indonesia. Ia diminta untuk menghitung jumlah penduduk bekerja yang memiliki pekerjaan tambahan berdasarkan status perkawinan dan provinsi.
-
-
-
+<strong>HELP!!!</strong> Siti diminta oleh rekan kerjanya untuk membuat tulisan mengenai <strong>Hustle Culture</strong> di Indonesia. Ia diminta untuk menghitung jumlah penduduk bekerja yang memiliki pekerjaan tambahan berdasarkan status perkawinan dan kabupaten.
 
 **Oleh karena itu:** 
 1. Bantulah Siti untuk menyediakan data tersebut. 
-2. Selain itu, bantu pula Siti untuk mengetahui provinsi mana dengan Hustle Culture paling mencolok.
+2. Selain itu, bantu pula Siti untuk mengetahui kabupaten mana dengan Hustle Culture paling mencolok.
 
 **BONUS**
-
 Apa yang harus Siti lakukan jika ingin menjawab pertanyaan: apakah orang yang sudah menikah cenderung ingin cepat kaya? 
 
 

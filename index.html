@@ -609,8 +609,7 @@ background-size: cover
 
 - Misalnya kita ingin melakukan agregasi data dari level individu -&gt; kabupaten 
 - Dapat dilakukan dengan *grouping* dan *summarise*
-- Contoh kasus: mengetahui jumlah lulusan SD di seluruh kabupaten di Indonesia berdasarkan jenis kelamin
-- Perlu memperhatikan variabel penimbang
+- Contoh kasus: mengetahui sampel lulusan SD di seluruh kabupaten di Indonesia berdasarkan jenis kelamin
 
 
 ```r
@@ -619,7 +618,7 @@ lulusan_sd &lt;- sak_leveled %&gt;%
   filter(ijazah == "SD setara") %&gt;%
   # group berdasarkan jenis kelamin dan kabupaten 
   group_by(kode_kab, jk) %&gt;%
-  summarise(jumlah = sum(penimbang, na.rm = TRUE)) %&gt;%
+  count() %&gt;%
   ungroup()
 
 lulusan_sd
@@ -627,20 +626,1074 @@ lulusan_sd
 
 ```
 ## # A tibble: 668 × 3
-##    kode_kab jk     jumlah
-##    &lt;fct&gt;    &lt;fct&gt;   &lt;int&gt;
-##  1 1101     pria     1656
-##  2 1102     pria      577
-##  3 1103     pria      622
-##  4 1103     wanita    772
-##  5 1104     wanita   1717
-##  6 1105     pria     1466
-##  7 1105     wanita    611
-##  8 1106     pria      970
-##  9 1108     pria      652
-## 10 1108     wanita    431
+##    kode_kab jk         n
+##    &lt;fct&gt;    &lt;fct&gt;  &lt;int&gt;
+##  1 1101     pria       3
+##  2 1102     pria       1
+##  3 1103     pria       1
+##  4 1103     wanita     1
+##  5 1104     wanita     2
+##  6 1105     pria       2
+##  7 1105     wanita     1
+##  8 1106     pria       2
+##  9 1108     pria       1
+## 10 1108     wanita     1
 ## # … with 658 more rows
 ```
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+**PERHATIAN!!!** Apabila menggunakan data survey, untuk agregasi pada tingkat yg lebih tinggi, misalnya kabupaten, maka perlu memperhatikan penimbang. Penimbang di sini adalah level kabupaten.
+
+
+```r
+library(survey)
+
+sd_samp &lt;- sak_leveled %&gt;%
+  #filter lulusan SD terlebih dahulu
+  filter(ijazah == "SD setara")
+
+svy.dat &lt;- svydesign(ids=~1, data=sd_samp,
+                     weights=sd_samp$penimbang)
+
+lulusan_sd_pop &lt;- svytable(~kode_kab + jk, 
+                     design=svy.dat) %&gt;%
+  as.data.frame()
+
+lulusan_sd_pop
+```
+
+```
+##      kode_kab     jk  Freq
+## 1        1101   pria  1656
+## 2        1102   pria   577
+## 3        1103   pria   622
+## 4        1104   pria     0
+## 5        1105   pria  1466
+## 6        1106   pria   970
+## 7        1107   pria     0
+## 8        1108   pria   652
+## 9        1109   pria   367
+## 10       1110   pria     0
+## 11       1111   pria     0
+## 12       1112   pria     0
+## 13       1113   pria     0
+## 14       1114   pria   869
+## 15       1115   pria     0
+## 16       1116   pria     0
+## 17       1117   pria     0
+## 18       1118   pria   612
+## 19       1171   pria     0
+## 20       1172   pria     0
+## 21       1173   pria   445
+## 22       1174   pria     0
+## 23       1175   pria   444
+## 24       1201   pria  2319
+## 25       1202   pria  1757
+## 26       1203   pria  2232
+## 27       1204   pria     0
+## 28       1205   pria   892
+## 29       1206   pria     0
+## 30       1207   pria  5220
+## 31       1208   pria  6075
+## 32       1209   pria   881
+## 33       1210   pria  2713
+## 34       1211   pria  2505
+## 35       1212   pria  3446
+## 36       1213   pria  2112
+## 37       1214   pria   959
+## 38       1215   pria  1015
+## 39       1216   pria     0
+## 40       1217   pria     0
+## 41       1218   pria  4022
+## 42       1219   pria  3193
+## 43       1220   pria     0
+## 44       1221   pria     0
+## 45       1222   pria  2918
+## 46       1223   pria  3143
+## 47       1224   pria  2306
+## 48       1225   pria  1907
+## 49       1271   pria  1232
+## 50       1272   pria  2763
+## 51       1273   pria  1064
+## 52       1274   pria     0
+## 53       1275   pria  3655
+## 54       1276   pria  1220
+## 55       1277   pria     0
+## 56       1278   pria     0
+## 57       1301   pria   745
+## 58       1302   pria  2655
+## 59       1303   pria     0
+## 60       1304   pria  2615
+## 61       1305   pria   803
+## 62       1306   pria     0
+## 63       1307   pria     0
+## 64       1308   pria     0
+## 65       1309   pria     0
+## 66       1310   pria  1287
+## 67       1311   pria  2626
+## 68       1312   pria  2919
+## 69       1371   pria     0
+## 70       1372   pria     0
+## 71       1373   pria  1251
+## 72       1374   pria     0
+## 73       1375   pria     0
+## 74       1376   pria  1666
+## 75       1377   pria     0
+## 76       1401   pria  2462
+## 77       1402   pria  7263
+## 78       1403   pria  1219
+## 79       1404   pria  3800
+## 80       1405   pria  1444
+## 81       1406   pria  3371
+## 82       1407   pria  2958
+## 83       1408   pria  1242
+## 84       1409   pria  6319
+## 85       1410   pria  3891
+## 86       1471   pria  3152
+## 87       1473   pria  4827
+## 88       1501   pria  2377
+## 89       1502   pria  5312
+## 90       1503   pria  3322
+## 91       1504   pria  2498
+## 92       1505   pria  2204
+## 93       1506   pria  2440
+## 94       1507   pria  4062
+## 95       1508   pria  5497
+## 96       1509   pria     0
+## 97       1571   pria  1368
+## 98       1572   pria     0
+## 99       1601   pria     0
+## 100      1602   pria  1263
+## 101      1603   pria  6004
+## 102      1604   pria  1636
+## 103      1605   pria  1279
+## 104      1606   pria  3347
+## 105      1607   pria  5178
+## 106      1608   pria  2626
+## 107      1609   pria  2287
+## 108      1610   pria  8647
+## 109      1611   pria     0
+## 110      1612   pria  1456
+## 111      1613   pria     0
+## 112      1671   pria  4582
+## 113      1672   pria  2618
+## 114      1673   pria  1686
+## 115      1674   pria  1544
+## 116      1701   pria     0
+## 117      1702   pria   549
+## 118      1703   pria     0
+## 119      1704   pria   922
+## 120      1705   pria  1815
+## 121      1706   pria   445
+## 122      1707   pria     0
+## 123      1708   pria   712
+## 124      1709   pria  1617
+## 125      1771   pria  1607
+## 126      1801   pria  3843
+## 127      1802   pria  5773
+## 128      1803   pria  3234
+## 129      1804   pria  4062
+## 130      1805   pria 11223
+## 131      1806   pria  6534
+## 132      1807   pria  1831
+## 133      1808   pria  3696
+## 134      1809   pria  7837
+## 135      1810   pria  4956
+## 136      1811   pria  7726
+## 137      1812   pria     0
+## 138      1813   pria     0
+## 139      1871   pria  1689
+## 140      1872   pria     0
+## 141      1901   pria     0
+## 142      1902   pria  1320
+## 143      1903   pria  1239
+## 144      1904   pria   725
+## 145      1905   pria  4484
+## 146      1906   pria  1870
+## 147      1971   pria   514
+## 148      2101   pria   410
+## 149      2102   pria  1147
+## 150      2103   pria   124
+## 151      2104   pria     0
+## 152      2105   pria     0
+## 153      2171   pria  1079
+## 154      2172   pria  1235
+## 155      3101   pria  3425
+## 156      3171   pria     0
+## 157      3172   pria     0
+## 158      3173   pria  2633
+## 159      3174   pria  6530
+## 160      3175   pria  2633
+## 161      3201   pria 28927
+## 162      3202   pria 28248
+## 163      3203   pria 24671
+## 164      3204   pria 35637
+## 165      3205   pria 19099
+## 166      3206   pria 10966
+## 167      3207   pria  6240
+## 168      3208   pria 10392
+## 169      3209   pria 15328
+## 170      3210   pria 28692
+## 171      3211   pria  7238
+## 172      3212   pria  8903
+## 173      3213   pria     0
+## 174      3214   pria  5427
+## 175      3215   pria 13514
+## 176      3216   pria  6231
+## 177      3217   pria 13010
+## 178      3218   pria  5925
+## 179      3271   pria  5166
+## 180      3272   pria 10332
+## 181      3273   pria  3109
+## 182      3274   pria     0
+## 183      3275   pria  6247
+## 184      3276   pria  3138
+## 185      3277   pria  8573
+## 186      3278   pria     0
+## 187      3279   pria  5075
+## 188      3301   pria  6973
+## 189      3302   pria 13112
+## 190      3303   pria  6496
+## 191      3304   pria 10853
+## 192      3305   pria  8626
+## 193      3306   pria  4307
+## 194      3307   pria 11620
+## 195      3308   pria  4796
+## 196      3309   pria  6627
+## 197      3310   pria  3502
+## 198      3311   pria  1615
+## 199      3312   pria  4621
+## 200      3313   pria  7756
+## 201      3314   pria     0
+## 202      3315   pria  5834
+## 203      3316   pria     0
+## 204      3317   pria  8485
+## 205      3318   pria  7909
+## 206      3319   pria  7476
+## 207      3320   pria  5365
+## 208      3321   pria 11305
+## 209      3322   pria  4509
+## 210      3323   pria  6689
+## 211      3324   pria  6996
+## 212      3325   pria 11220
+## 213      3326   pria 14194
+## 214      3327   pria 12290
+## 215      3328   pria 12022
+## 216      3329   pria 10616
+## 217      3371   pria     0
+## 218      3372   pria  1427
+## 219      3373   pria  1602
+## 220      3374   pria  1720
+## 221      3375   pria  2683
+## 222      3376   pria  1794
+## 223      3401   pria  1269
+## 224      3402   pria  3823
+## 225      3403   pria  6887
+## 226      3404   pria  1669
+## 227      3471   pria  1986
+## 228      3501   pria  7367
+## 229      3502   pria 13500
+## 230      3503   pria  2734
+## 231      3504   pria 11194
+## 232      3505   pria  4202
+## 233      3506   pria 11732
+## 234      3507   pria 12690
+## 235      3508   pria  7481
+## 236      3509   pria 13037
+## 237      3510   pria 10379
+## 238      3511   pria  7353
+## 239      3512   pria  8117
+## 240      3513   pria 12124
+## 241      3514   pria  5429
+## 242      3515   pria  4068
+## 243      3516   pria  2870
+## 244      3517   pria 10227
+## 245      3518   pria  1962
+## 246      3519   pria  6875
+## 247      3520   pria     0
+## 248      3521   pria  5341
+## 249      3522   pria  6604
+## 250      3523   pria 22265
+## 251      3524   pria  1773
+## 252      3525   pria 11019
+## 253      3526   pria 19445
+## 254      3527   pria  2293
+## 255      3528   pria  4647
+## 256      3529   pria  4102
+## 257      3571   pria     0
+## 258      3572   pria     0
+## 259      3573   pria     0
+## 260      3574   pria  1826
+## 261      3575   pria  1972
+## 262      3576   pria  2202
+## 263      3577   pria  2077
+## 264      3578   pria  2286
+## 265      3579   pria 11089
+## 266      3601   pria 10702
+## 267      3602   pria 22657
+## 268      3603   pria 10979
+## 269      3604   pria  2559
+## 270      3671   pria  6062
+## 271      3672   pria  4824
+## 272      3673   pria  2509
+## 273      3674   pria     0
+## 274      5101   pria   791
+## 275      5102   pria     0
+## 276      5103   pria     0
+## 277      5104   pria   840
+## 278      5105   pria  3510
+## 279      5106   pria  1015
+## 280      5107   pria  1811
+## 281      5108   pria   894
+## 282      5171   pria  1252
+## 283      5201   pria  2258
+## 284      5202   pria     0
+## 285      5203   pria  3047
+## 286      5204   pria  2193
+## 287      5205   pria  1291
+## 288      5206   pria  2485
+## 289      5207   pria  1330
+## 290      5208   pria  3520
+## 291      5271   pria     0
+## 292      5272   pria  1050
+## 293      5301   pria  1062
+## 294      5302   pria  1782
+## 295      5303   pria  1141
+## 296      5304   pria  2244
+## 297      5305   pria     0
+## 298      5306   pria   715
+## 299      5307   pria   465
+## 300      5308   pria   566
+## 301      5309   pria   541
+## 302      5310   pria  2295
+## 303      5311   pria  1898
+## 304      5312   pria  1430
+## 305      5313   pria  1203
+## 306      5314   pria  1668
+## 307      5315   pria   675
+## 308      5316   pria  1241
+## 309      5317   pria  1475
+## 310      5318   pria     0
+## 311      5319   pria  6022
+## 312      5320   pria  1335
+## 313      5321   pria     0
+## 314      5371   pria   865
+## 315      6101   pria     0
+## 316      6102   pria  1899
+## 317      6103   pria   735
+## 318      6104   pria  3213
+## 319      6105   pria  1723
+## 320      6106   pria  5548
+## 321      6107   pria     0
+## 322      6108   pria     0
+## 323      6109   pria  2596
+## 324      6110   pria  1022
+## 325      6111   pria   906
+## 326      6112   pria  2711
+## 327      6171   pria     0
+## 328      6172   pria  1514
+## 329      6201   pria  1055
+## 330      6202   pria  1178
+## 331      6203   pria  2916
+## 332      6204   pria  2341
+## 333      6205   pria   564
+## 334      6206   pria     0
+## 335      6207   pria  1863
+## 336      6208   pria  4558
+## 337      6209   pria     0
+## 338      6210   pria  3167
+## 339      6211   pria     0
+## 340      6212   pria  1228
+## 341      6213   pria   474
+## 342      6271   pria  1172
+## 343      6301   pria   890
+## 344      6302   pria  1897
+## 345      6303   pria  2525
+## 346      6304   pria     0
+## 347      6305   pria  2762
+## 348      6306   pria  4166
+## 349      6307   pria  2510
+## 350      6308   pria     0
+## 351      6309   pria   954
+## 352      6310   pria  2795
+## 353      6311   pria   890
+## 354      6371   pria  2109
+## 355      6372   pria  2749
+## 356      6401   pria  2042
+## 357      6402   pria  2784
+## 358      6403   pria  1609
+## 359      6404   pria  3193
+## 360      6405   pria  2458
+## 361      6409   pria  1832
+## 362      6411   pria     0
+## 363      6471   pria  2108
+## 364      6472   pria  2987
+## 365      6474   pria   783
+## 366      6501   pria   506
+## 367      6502   pria   847
+## 368      6503   pria     0
+## 369      6504   pria  1422
+## 370      6571   pria     0
+## 371      7101   pria     0
+## 372      7102   pria   523
+## 373      7103   pria   891
+## 374      7104   pria   871
+## 375      7105   pria   368
+## 376      7106   pria  1683
+## 377      7107   pria  1199
+## 378      7108   pria  1916
+## 379      7109   pria   968
+## 380      7110   pria   403
+## 381      7111   pria   531
+## 382      7171   pria  2888
+## 383      7172   pria     0
+## 384      7173   pria     0
+## 385      7174   pria     0
+## 386      7201   pria   857
+## 387      7202   pria  3319
+## 388      7203   pria   754
+## 389      7204   pria     0
+## 390      7205   pria  1080
+## 391      7206   pria  1217
+## 392      7207   pria   754
+## 393      7208   pria  1369
+## 394      7209   pria  2586
+## 395      7210   pria   595
+## 396      7211   pria   721
+## 397      7212   pria     0
+## 398      7271   pria     0
+## 399      7301   pria     0
+## 400      7302   pria  1608
+## 401      7303   pria  3056
+## 402      7304   pria  1678
+## 403      7305   pria     0
+## 404      7306   pria   971
+## 405      7307   pria  2506
+## 406      7308   pria   971
+## 407      7309   pria   971
+## 408      7310   pria  3711
+## 409      7311   pria   843
+## 410      7312   pria  2505
+## 411      7313   pria   718
+## 412      7314   pria   863
+## 413      7315   pria   843
+## 414      7316   pria   718
+## 415      7317   pria     0
+## 416      7318   pria   816
+## 417      7322   pria     0
+## 418      7325   pria  1658
+## 419      7326   pria   816
+## 420      7371   pria   820
+## 421      7372   pria     0
+## 422      7373   pria  2074
+## 423      7401   pria     0
+## 424      7402   pria     0
+## 425      7403   pria     0
+## 426      7404   pria   625
+## 427      7405   pria  3250
+## 428      7406   pria  1354
+## 429      7407   pria   475
+## 430      7408   pria  3692
+## 431      7409   pria  1293
+## 432      7410   pria   625
+## 433      7411   pria   729
+## 434      7412   pria     0
+## 435      7471   pria     0
+## 436      7472   pria   576
+## 437      7501   pria  1264
+## 438      7502   pria  2315
+## 439      7503   pria  2062
+## 440      7504   pria  1888
+## 441      7505   pria  1485
+## 442      7571   pria   699
+## 443      7601   pria  2364
+## 444      7602   pria     0
+## 445      7603   pria  2104
+## 446      7604   pria  1476
+## 447      7605   pria   964
+## 448      7606   pria  1880
+## 449      8101   pria  1231
+## 450      8102   pria   495
+## 451      8103   pria   355
+## 452      8104   pria  1777
+## 453      8105   pria   416
+## 454      8106   pria     0
+## 455      8107   pria  1330
+## 456      8108   pria   399
+## 457      8109   pria   815
+## 458      8171   pria     0
+## 459      8172   pria     0
+## 460      8201   pria   301
+## 461      8202   pria     0
+## 462      8203   pria     0
+## 463      8204   pria   609
+## 464      8205   pria  1155
+## 465      8206   pria  1835
+## 466      8207   pria   733
+## 467      8208   pria   454
+## 468      8271   pria   497
+## 469      8272   pria     0
+## 470      9101   pria   336
+## 471      9102   pria     0
+## 472      9103   pria     0
+## 473      9104   pria     0
+## 474      9105   pria     0
+## 475      9106   pria  1266
+## 476      9107   pria   774
+## 477      9108   pria     0
+## 478      9109   pria   324
+## 479      9110   pria     0
+## 480      9111   pria     0
+## 481      9112   pria     0
+## 482      9171   pria   344
+## 483      9401   pria   915
+## 484      9402   pria  1251
+## 485      9403   pria  1220
+## 486      9404   pria     0
+## 487      9408   pria     0
+## 488      9409   pria     0
+## 489      9410   pria   554
+## 490      9411   pria   358
+## 491      9412   pria   542
+## 492      9413   pria   998
+## 493      9414   pria   497
+## 494      9415   pria   380
+## 495      9416   pria   420
+## 496      9417   pria     0
+## 497      9418   pria     0
+## 498      9419   pria   510
+## 499      9420   pria     0
+## 500      9426   pria     0
+## 501      9427   pria     0
+## 502      9428   pria     0
+## 503      9429   pria     0
+## 504      9430   pria     0
+## 505      9431   pria   380
+## 506      9432   pria  1292
+## 507      9433   pria     0
+## 508      9434   pria     0
+## 509      9435   pria     0
+## 510      9436   pria     0
+## 511      9471   pria   439
+## 512      1101 wanita     0
+## 513      1102 wanita     0
+## 514      1103 wanita   772
+## 515      1104 wanita  1717
+## 516      1105 wanita   611
+## 517      1106 wanita     0
+## 518      1107 wanita     0
+## 519      1108 wanita   431
+## 520      1109 wanita     0
+## 521      1110 wanita     0
+## 522      1111 wanita     0
+## 523      1112 wanita     0
+## 524      1113 wanita     0
+## 525      1114 wanita     0
+## 526      1115 wanita     0
+## 527      1116 wanita     0
+## 528      1117 wanita  2779
+## 529      1118 wanita   802
+## 530      1171 wanita     0
+## 531      1172 wanita   470
+## 532      1173 wanita   745
+## 533      1174 wanita     0
+## 534      1175 wanita     0
+## 535      1201 wanita  1735
+## 536      1202 wanita  2219
+## 537      1203 wanita  1654
+## 538      1204 wanita   827
+## 539      1205 wanita   963
+## 540      1206 wanita     0
+## 541      1207 wanita     0
+## 542      1208 wanita   963
+## 543      1209 wanita  1122
+## 544      1210 wanita  1654
+## 545      1211 wanita  5691
+## 546      1212 wanita  3751
+## 547      1213 wanita  1040
+## 548      1214 wanita     0
+## 549      1215 wanita     0
+## 550      1216 wanita     0
+## 551      1217 wanita   908
+## 552      1218 wanita     0
+## 553      1219 wanita   974
+## 554      1220 wanita     0
+## 555      1221 wanita   963
+## 556      1222 wanita     0
+## 557      1223 wanita  1898
+## 558      1224 wanita  1965
+## 559      1225 wanita     0
+## 560      1271 wanita     0
+## 561      1272 wanita  1112
+## 562      1273 wanita  1122
+## 563      1274 wanita     0
+## 564      1275 wanita     0
+## 565      1276 wanita  1122
+## 566      1277 wanita     0
+## 567      1278 wanita   967
+## 568      1301 wanita   781
+## 569      1302 wanita     0
+## 570      1303 wanita   677
+## 571      1304 wanita     0
+## 572      1305 wanita   640
+## 573      1306 wanita     0
+## 574      1307 wanita  1470
+## 575      1308 wanita  1778
+## 576      1309 wanita  1757
+## 577      1310 wanita   778
+## 578      1311 wanita     0
+## 579      1312 wanita  2914
+## 580      1371 wanita   822
+## 581      1372 wanita     0
+## 582      1373 wanita     0
+## 583      1374 wanita     0
+## 584      1375 wanita     0
+## 585      1376 wanita     0
+## 586      1377 wanita     0
+## 587      1401 wanita  1293
+## 588      1402 wanita     0
+## 589      1403 wanita  2438
+## 590      1404 wanita     0
+## 591      1405 wanita     0
+## 592      1406 wanita  1409
+## 593      1407 wanita   952
+## 594      1408 wanita  1219
+## 595      1409 wanita  1138
+## 596      1410 wanita     0
+## 597      1471 wanita     0
+## 598      1473 wanita  1293
+## 599      1501 wanita     0
+## 600      1502 wanita     0
+## 601      1503 wanita     0
+## 602      1504 wanita  1429
+## 603      1505 wanita   857
+## 604      1506 wanita     0
+## 605      1507 wanita     0
+## 606      1508 wanita   857
+## 607      1509 wanita     0
+## 608      1571 wanita     0
+## 609      1572 wanita     0
+## 610      1601 wanita     0
+## 611      1602 wanita  4894
+## 612      1603 wanita  3172
+## 613      1604 wanita     0
+## 614      1605 wanita  4488
+## 615      1606 wanita     0
+## 616      1607 wanita     0
+## 617      1608 wanita  1289
+## 618      1609 wanita  1494
+## 619      1610 wanita  1412
+## 620      1611 wanita     0
+## 621      1612 wanita  1716
+## 622      1613 wanita     0
+## 623      1671 wanita  1108
+## 624      1672 wanita  1009
+## 625      1673 wanita     0
+## 626      1674 wanita     0
+## 627      1701 wanita     0
+## 628      1702 wanita   616
+## 629      1703 wanita     0
+## 630      1704 wanita     0
+## 631      1705 wanita     0
+## 632      1706 wanita   523
+## 633      1707 wanita  1086
+## 634      1708 wanita     0
+## 635      1709 wanita   629
+## 636      1771 wanita   696
+## 637      1801 wanita  5217
+## 638      1802 wanita  2510
+## 639      1803 wanita     0
+## 640      1804 wanita  2738
+## 641      1805 wanita  1392
+## 642      1806 wanita  2468
+## 643      1807 wanita  1507
+## 644      1808 wanita     0
+## 645      1809 wanita     0
+## 646      1810 wanita  1393
+## 647      1811 wanita  3141
+## 648      1812 wanita     0
+## 649      1813 wanita     0
+## 650      1871 wanita     0
+## 651      1872 wanita  2169
+## 652      1901 wanita   643
+## 653      1902 wanita  1231
+## 654      1903 wanita     0
+## 655      1904 wanita   813
+## 656      1905 wanita   761
+## 657      1906 wanita     0
+## 658      1971 wanita   534
+## 659      2101 wanita     0
+## 660      2102 wanita     0
+## 661      2103 wanita     0
+## 662      2104 wanita     0
+## 663      2105 wanita     0
+## 664      2171 wanita     0
+## 665      2172 wanita     0
+## 666      3101 wanita     0
+## 667      3171 wanita  7214
+## 668      3172 wanita  3004
+## 669      3173 wanita  6981
+## 670      3174 wanita     0
+## 671      3175 wanita     0
+## 672      3201 wanita  8860
+## 673      3202 wanita 13688
+## 674      3203 wanita 13765
+## 675      3204 wanita     0
+## 676      3205 wanita  2484
+## 677      3206 wanita 10761
+## 678      3207 wanita     0
+## 679      3208 wanita  3901
+## 680      3209 wanita  3331
+## 681      3210 wanita  8299
+## 682      3211 wanita  9153
+## 683      3212 wanita  7232
+## 684      3213 wanita  2484
+## 685      3214 wanita     0
+## 686      3215 wanita  3123
+## 687      3216 wanita  3901
+## 688      3217 wanita     0
+## 689      3218 wanita     0
+## 690      3271 wanita     0
+## 691      3272 wanita     0
+## 692      3273 wanita  7386
+## 693      3274 wanita  3123
+## 694      3275 wanita     0
+## 695      3276 wanita     0
+## 696      3277 wanita  3331
+## 697      3278 wanita  9867
+## 698      3279 wanita     0
+## 699      3301 wanita  4328
+## 700      3302 wanita  4077
+## 701      3303 wanita  9003
+## 702      3304 wanita  5718
+## 703      3305 wanita  2101
+## 704      3306 wanita  2343
+## 705      3307 wanita  8805
+## 706      3308 wanita  6440
+## 707      3309 wanita  4808
+## 708      3310 wanita  6526
+## 709      3311 wanita     0
+## 710      3312 wanita  6354
+## 711      3313 wanita  9812
+## 712      3314 wanita     0
+## 713      3315 wanita  1638
+## 714      3316 wanita     0
+## 715      3317 wanita  8631
+## 716      3318 wanita  6578
+## 717      3319 wanita  4377
+## 718      3320 wanita     0
+## 719      3321 wanita  3908
+## 720      3322 wanita  9542
+## 721      3323 wanita  4643
+## 722      3324 wanita  2067
+## 723      3325 wanita  8981
+## 724      3326 wanita  6381
+## 725      3327 wanita  6745
+## 726      3328 wanita  3190
+## 727      3329 wanita     0
+## 728      3371 wanita     0
+## 729      3372 wanita     0
+## 730      3373 wanita     0
+## 731      3374 wanita  3403
+## 732      3375 wanita     0
+## 733      3376 wanita     0
+## 734      3401 wanita  1868
+## 735      3402 wanita     0
+## 736      3403 wanita  1674
+## 737      3404 wanita     0
+## 738      3471 wanita     0
+## 739      3501 wanita  2275
+## 740      3502 wanita     0
+## 741      3503 wanita  6610
+## 742      3504 wanita  5444
+## 743      3505 wanita     0
+## 744      3506 wanita  6650
+## 745      3507 wanita  5027
+## 746      3508 wanita  2445
+## 747      3509 wanita  4288
+## 748      3510 wanita  9502
+## 749      3511 wanita  1876
+## 750      3512 wanita  4494
+## 751      3513 wanita  6940
+## 752      3514 wanita     0
+## 753      3515 wanita  3872
+## 754      3516 wanita     0
+## 755      3517 wanita     0
+## 756      3518 wanita  4892
+## 757      3519 wanita  2446
+## 758      3520 wanita  4481
+## 759      3521 wanita  8940
+## 760      3522 wanita  7359
+## 761      3523 wanita  3923
+## 762      3524 wanita  3598
+## 763      3525 wanita  4096
+## 764      3526 wanita  7957
+## 765      3527 wanita     0
+## 766      3528 wanita 11158
+## 767      3529 wanita  8898
+## 768      3571 wanita  1878
+## 769      3572 wanita     0
+## 770      3573 wanita     0
+## 771      3574 wanita  2100
+## 772      3575 wanita     0
+## 773      3576 wanita  6311
+## 774      3577 wanita     0
+## 775      3578 wanita  4358
+## 776      3579 wanita  7165
+## 777      3601 wanita  8414
+## 778      3602 wanita  6004
+## 779      3603 wanita  7347
+## 780      3604 wanita  8080
+## 781      3671 wanita     0
+## 782      3672 wanita  2467
+## 783      3673 wanita  6052
+## 784      3674 wanita  4980
+## 785      5101 wanita  4571
+## 786      5102 wanita  2094
+## 787      5103 wanita     0
+## 788      5104 wanita   980
+## 789      5105 wanita     0
+## 790      5106 wanita  3034
+## 791      5107 wanita  5442
+## 792      5108 wanita  2388
+## 793      5171 wanita  2619
+## 794      5201 wanita  2254
+## 795      5202 wanita  7762
+## 796      5203 wanita  1264
+## 797      5204 wanita     0
+## 798      5205 wanita  1244
+## 799      5206 wanita  1013
+## 800      5207 wanita  2469
+## 801      5208 wanita     0
+## 802      5271 wanita  2806
+## 803      5272 wanita     0
+## 804      5301 wanita     0
+## 805      5302 wanita     0
+## 806      5303 wanita  1345
+## 807      5304 wanita  1345
+## 808      5305 wanita  2256
+## 809      5306 wanita     0
+## 810      5307 wanita   649
+## 811      5308 wanita   399
+## 812      5309 wanita  1259
+## 813      5310 wanita   610
+## 814      5311 wanita  2673
+## 815      5312 wanita  1315
+## 816      5313 wanita   649
+## 817      5314 wanita  1290
+## 818      5315 wanita     0
+## 819      5316 wanita     0
+## 820      5317 wanita   649
+## 821      5318 wanita   671
+## 822      5319 wanita  2220
+## 823      5320 wanita     0
+## 824      5321 wanita   738
+## 825      5371 wanita     0
+## 826      6101 wanita  1492
+## 827      6102 wanita  1930
+## 828      6103 wanita  2631
+## 829      6104 wanita  1811
+## 830      6105 wanita   820
+## 831      6106 wanita  3693
+## 832      6107 wanita     0
+## 833      6108 wanita  1492
+## 834      6109 wanita   820
+## 835      6110 wanita   911
+## 836      6111 wanita     0
+## 837      6112 wanita     0
+## 838      6171 wanita     0
+## 839      6172 wanita     0
+## 840      6201 wanita   541
+## 841      6202 wanita   410
+## 842      6203 wanita  1664
+## 843      6204 wanita     0
+## 844      6205 wanita   541
+## 845      6206 wanita     0
+## 846      6207 wanita     0
+## 847      6208 wanita  1194
+## 848      6209 wanita  1849
+## 849      6210 wanita  1038
+## 850      6211 wanita     0
+## 851      6212 wanita     0
+## 852      6213 wanita  1112
+## 853      6271 wanita     0
+## 854      6301 wanita     0
+## 855      6302 wanita     0
+## 856      6303 wanita  1798
+## 857      6304 wanita  2018
+## 858      6305 wanita   669
+## 859      6306 wanita   554
+## 860      6307 wanita  1877
+## 861      6308 wanita     0
+## 862      6309 wanita     0
+## 863      6310 wanita     0
+## 864      6311 wanita  1989
+## 865      6371 wanita     0
+## 866      6372 wanita   830
+## 867      6401 wanita  1119
+## 868      6402 wanita  2190
+## 869      6403 wanita     0
+## 870      6404 wanita  1097
+## 871      6405 wanita     0
+## 872      6409 wanita     0
+## 873      6411 wanita     0
+## 874      6471 wanita  2029
+## 875      6472 wanita  1977
+## 876      6474 wanita  1097
+## 877      6501 wanita   240
+## 878      6502 wanita     0
+## 879      6503 wanita     0
+## 880      6504 wanita     0
+## 881      6571 wanita   270
+## 882      7101 wanita   360
+## 883      7102 wanita   798
+## 884      7103 wanita     0
+## 885      7104 wanita     0
+## 886      7105 wanita   854
+## 887      7106 wanita     0
+## 888      7107 wanita     0
+## 889      7108 wanita     0
+## 890      7109 wanita     0
+## 891      7110 wanita     0
+## 892      7111 wanita     0
+## 893      7171 wanita   798
+## 894      7172 wanita     0
+## 895      7173 wanita   516
+## 896      7174 wanita   905
+## 897      7201 wanita     0
+## 898      7202 wanita   708
+## 899      7203 wanita     0
+## 900      7204 wanita  1529
+## 901      7205 wanita   833
+## 902      7206 wanita  1387
+## 903      7207 wanita   674
+## 904      7208 wanita   581
+## 905      7209 wanita  1516
+## 906      7210 wanita     0
+## 907      7211 wanita     0
+## 908      7212 wanita  1439
+## 909      7271 wanita  1256
+## 910      7301 wanita  1026
+## 911      7302 wanita   911
+## 912      7303 wanita     0
+## 913      7304 wanita     0
+## 914      7305 wanita  1550
+## 915      7306 wanita   971
+## 916      7307 wanita   850
+## 917      7308 wanita  1635
+## 918      7309 wanita     0
+## 919      7310 wanita   957
+## 920      7311 wanita     0
+## 921      7312 wanita     0
+## 922      7313 wanita  2108
+## 923      7314 wanita  2152
+## 924      7315 wanita     0
+## 925      7316 wanita  1480
+## 926      7317 wanita     0
+## 927      7318 wanita     0
+## 928      7322 wanita   784
+## 929      7325 wanita   850
+## 930      7326 wanita     0
+## 931      7371 wanita  2108
+## 932      7372 wanita     0
+## 933      7373 wanita   911
+## 934      7401 wanita  1261
+## 935      7402 wanita     0
+## 936      7403 wanita     0
+## 937      7404 wanita     0
+## 938      7405 wanita     0
+## 939      7406 wanita     0
+## 940      7407 wanita     0
+## 941      7408 wanita  1468
+## 942      7409 wanita   601
+## 943      7410 wanita     0
+## 944      7411 wanita   612
+## 945      7412 wanita     0
+## 946      7471 wanita     0
+## 947      7472 wanita     0
+## 948      7501 wanita   385
+## 949      7502 wanita     0
+## 950      7503 wanita   715
+## 951      7504 wanita   531
+## 952      7505 wanita  1610
+## 953      7571 wanita     0
+## 954      7601 wanita   294
+## 955      7602 wanita   699
+## 956      7603 wanita     0
+## 957      7604 wanita     0
+## 958      7605 wanita   698
+## 959      7606 wanita     0
+## 960      8101 wanita   414
+## 961      8102 wanita   388
+## 962      8103 wanita   426
+## 963      8104 wanita     0
+## 964      8105 wanita   472
+## 965      8106 wanita     0
+## 966      8107 wanita   388
+## 967      8108 wanita     0
+## 968      8109 wanita     0
+## 969      8171 wanita     0
+## 970      8172 wanita   417
+## 971      8201 wanita   504
+## 972      8202 wanita     0
+## 973      8203 wanita   755
+## 974      8204 wanita  1107
+## 975      8205 wanita     0
+## 976      8206 wanita   567
+## 977      8207 wanita   944
+## 978      8208 wanita     0
+## 979      8271 wanita     0
+## 980      8272 wanita     0
+## 981      9101 wanita   637
+## 982      9102 wanita   350
+## 983      9103 wanita     0
+## 984      9104 wanita     0
+## 985      9105 wanita     0
+## 986      9106 wanita     0
+## 987      9107 wanita   218
+## 988      9108 wanita     0
+## 989      9109 wanita     0
+## 990      9110 wanita     0
+## 991      9111 wanita     0
+## 992      9112 wanita     0
+## 993      9171 wanita     0
+## 994      9401 wanita     0
+## 995      9402 wanita     0
+## 996      9403 wanita     0
+## 997      9404 wanita     0
+## 998      9408 wanita   651
+## 999      9409 wanita     0
+## 1000     9410 wanita   512
+## 1001     9411 wanita     0
+## 1002     9412 wanita   349
+## 1003     9413 wanita     0
+## 1004     9414 wanita     0
+## 1005     9415 wanita  1943
+## 1006     9416 wanita     0
+## 1007     9417 wanita   395
+## 1008     9418 wanita     0
+## 1009     9419 wanita   422
+## 1010     9420 wanita     0
+## 1011     9426 wanita     0
+## 1012     9427 wanita     0
+## 1013     9428 wanita     0
+## 1014     9429 wanita   365
+## 1015     9430 wanita     0
+## 1016     9431 wanita     0
+## 1017     9432 wanita     0
+## 1018     9433 wanita     0
+## 1019     9434 wanita     0
+## 1020     9435 wanita     0
+## 1021     9436 wanita   375
+## 1022     9471 wanita   415
+```
+
+
 
 ---
 class: left
@@ -662,753 +1715,1035 @@ kode_kab &lt;- sak %&gt;%
   mutate(KODE_KABB = as.factor(KODE_KABB)) %&gt;%
   distinct(.keep_all = TRUE)
 
-lulusan_sd_joined &lt;- left_join(kode_kab, lulusan_sd, by = c("KODE_KABB" = "kode_kab"))
+lulusan_sd_joined &lt;- left_join(kode_kab, lulusan_sd_pop, by = c("KODE_KABB" = "kode_kab"))
 
 lulusan_sd_joined
 ```
 
 ```
-##     KODE_KABB                   NAMA_KAB     jk jumlah
-## 1        3520                    MAGETAN wanita   4481
-## 2        3517                    JOMBANG   pria  10227
-## 3        1571                      JAMBI   pria   1368
-## 4        6171                  PONTIANAK   &lt;NA&gt;     NA
-## 5        5108                   BULELENG   pria    894
-## 6        5108                   BULELENG wanita   2388
-## 7        1273           PEMATANG SIANTAR   pria   1064
-## 8        1273           PEMATANG SIANTAR wanita   1122
-## 9        1204            TAPANULI TENGAH wanita    827
-## 10       3327                   PEMALANG   pria  12290
-## 11       3327                   PEMALANG wanita   6745
-## 12       7314          SIDENRENG RAPPANG   pria    863
-## 13       7314          SIDENRENG RAPPANG wanita   2152
-## 14       1971             PANGKAL PINANG   pria    514
-## 15       1971             PANGKAL PINANG wanita    534
-## 16       1371                     PADANG wanita    822
-## 17       6372                BANJAR BARU   pria   2749
-## 18       6372                BANJAR BARU wanita    830
-## 19       7306                       GOWA   pria    971
-## 20       7306                       GOWA wanita    971
-## 21       3212                  INDRAMAYU   pria   8903
-## 22       3212                  INDRAMAYU wanita   7232
-## 23       1609    OGAN KOMERING ULU TIMUR   pria   2287
-## 24       1609    OGAN KOMERING ULU TIMUR wanita   1494
-## 25       3315                   GROBOGAN   pria   5834
-## 26       3315                   GROBOGAN wanita   1638
-## 27       3171            JAKARTA SELATAN wanita   7214
-## 28       5104                    GIANYAR   pria    840
-## 29       5104                    GIANYAR wanita    980
-## 30       5315            MANGGARAI BARAT   pria    675
-## 31       6112                  KUBU RAYA   pria   2711
-## 32       2172             TANJUNG PINANG   pria   1235
-## 33       8109               BURU SELATAN   pria    815
-## 34       2171                  B A T A M   pria   1079
-## 35       3213                     SUBANG wanita   2484
-## 36       1701           BENGKULU SELATAN   &lt;NA&gt;     NA
-## 37       6504                    NUNUKAN   pria   1422
-## 38       7202                    BANGGAI   pria   3319
-## 39       7202                    BANGGAI wanita    708
-## 40       5307                       ALOR   pria    465
-## 41       5307                       ALOR wanita    649
-## 42       3501                    PACITAN   pria   7367
-## 43       3501                    PACITAN wanita   2275
-## 44       7403                     KONAWE   &lt;NA&gt;     NA
-## 45       3211                   SUMEDANG   pria   7238
-## 46       3211                   SUMEDANG wanita   9153
-## 47       3207                     CIAMIS   pria   6240
-## 48       5302                SUMBA TIMUR   pria   1782
-## 49       5317           SUMBA BARAT DAYA   pria   1475
-## 50       5317           SUMBA BARAT DAYA wanita    649
-## 51       3601                 PANDEGLANG   pria  10702
-## 52       3601                 PANDEGLANG wanita   8414
-## 53       1207               LABUHAN BATU   pria   5220
-## 54       1114               ACEH TAMIANG   pria    869
-## 55       9420                     KEEROM   &lt;NA&gt;     NA
-## 56       6108                KAPUAS HULU wanita   1492
-## 57       3578                   SURABAYA   pria   2286
-## 58       3578                   SURABAYA wanita   4358
-## 59       1471                  PEKANBARU   pria   3152
-## 60       5309               FLORES TIMUR   pria    541
-## 61       5309               FLORES TIMUR wanita   1259
-## 62       6302                  KOTA BARU   pria   1897
-## 63       6305                      TAPIN   pria   2762
-## 64       6305                      TAPIN wanita    669
-## 65       3323                 TEMANGGUNG   pria   6689
-## 66       3323                 TEMANGGUNG wanita   4643
-## 67       1174                LHOKSEUMAWE   &lt;NA&gt;     NA
-## 68       3525                     GRESIK   pria  11019
-## 69       3525                     GRESIK wanita   4096
-## 70       8201            HALMAHERA BARAT   pria    301
-## 71       8201            HALMAHERA BARAT wanita    504
-## 72       1221               PADANG LAWAS wanita    963
-## 73       3302                   BANYUMAS   pria  13112
-## 74       3302                   BANYUMAS wanita   4077
-## 75       1304                  SIJUNJUNG   pria   2615
-## 76       5313                  MANGGARAI   pria   1203
-## 77       5313                  MANGGARAI wanita    649
-## 78       3572                     BLITAR   &lt;NA&gt;     NA
-## 79       1278               GUNUNGSITOLI wanita    967
-## 80       9431           MAMBERAMO TENGAH   pria    380
-## 81       1374             PADANG PANJANG   &lt;NA&gt;     NA
-## 82       8203             KEPULAUAN SULA wanita    755
-## 83       7410               KONAWE UTARA   pria    625
-## 84       6207                   LAMANDAU   pria   1863
-## 85       1707                     LEBONG wanita   1086
-## 86       6201         KOTAWARINGIN BARAT   pria   1055
-## 87       6201         KOTAWARINGIN BARAT wanita    541
-## 88       7103          KEPULAUAN SANGIHE   pria    891
-## 89       5371                     KUPANG   pria    865
-## 90       3273                    BANDUNG   pria   3109
-## 91       3273                    BANDUNG wanita   7386
-## 92       9101                     FAKFAK   pria    336
-## 93       9101                     FAKFAK wanita    637
-## 94       1213                    LANGKAT   pria   2112
-## 95       1213                    LANGKAT wanita   1040
-## 96       7501                    BOALEMO   pria   1264
-## 97       7501                    BOALEMO wanita    385
-## 98       1214               NIAS SELATAN   pria    959
-## 99       9419                      SARMI   pria    510
-## 100      9419                      SARMI wanita    422
-## 101      6371                BANJARMASIN   pria   2109
-## 102      9428             MAMBERAMO RAYA   &lt;NA&gt;     NA
-## 103      3317                    REMBANG   pria   8485
-## 104      3317                    REMBANG wanita   8631
-## 105      3202                   SUKABUMI   pria  28248
-## 106      3202                   SUKABUMI wanita  13688
-## 107      6310                TANAH BUMBU   pria   2795
-## 108      1405                    S I A K   pria   1444
-## 109      5321                     MALAKA wanita    738
-## 110      6503                TANA TIDUNG   &lt;NA&gt;     NA
-## 111      7309   PANGKAJENE DAN KEPULAUAN   pria    971
-## 112      1607                 BANYU ASIN   pria   5178
-## 113      6105                    SANGGAU   pria   1723
-## 114      6105                    SANGGAU wanita    820
-## 115      1809                  PESAWARAN   pria   7837
-## 116      7205                   DONGGALA   pria   1080
-## 117      7205                   DONGGALA wanita    833
-## 118      1223         LABUHAN BATU UTARA   pria   3143
-## 119      1223         LABUHAN BATU UTARA wanita   1898
-## 120      7401                      BUTON wanita   1261
-## 121      3604                     SERANG   pria   2559
-## 122      3604                     SERANG wanita   8080
-## 123      6209                   KATINGAN wanita   1849
-## 124      7502                  GORONTALO   pria   2315
-## 125      3372                  SURAKARTA   pria   1427
-## 126      7472                     BAUBAU   pria    576
-## 127      3324                     KENDAL   pria   6996
-## 128      3324                     KENDAL wanita   2067
-## 129      7603                     MAMASA   pria   2104
-## 130      5316               SUMBA TENGAH   pria   1241
-## 131      7106             MINAHASA UTARA   pria   1683
-## 132      1803            LAMPUNG SELATAN   pria   3234
-## 133      3507                     MALANG   pria  12690
-## 134      3507                     MALANG wanita   5027
-## 135      3318                       PATI   pria   7909
-## 136      3318                       PATI wanita   6578
-## 137      3524                   LAMONGAN   pria   1773
-## 138      3524                   LAMONGAN wanita   3598
-## 139      6102                 BENGKAYANG   pria   1899
-## 140      6102                 BENGKAYANG wanita   1930
-## 141      3275                     BEKASI   pria   6247
-## 142      1905             BANGKA SELATAN   pria   4484
-## 143      1905             BANGKA SELATAN wanita    761
-## 144      1219                  BATU BARA   pria   3193
-## 145      1219                  BATU BARA wanita    974
-## 146      5106                     BANGLI   pria   1015
-## 147      5106                     BANGLI wanita   3034
-## 148      1210                      DAIRI   pria   2713
-## 149      1210                      DAIRI wanita   1654
-## 150      1271                    SIBOLGA   pria   1232
-## 151      1217                    SAMOSIR wanita    908
-## 152      1175               SUBULUSSALAM   pria    444
-## 153      9414                      MAPPI   pria    497
-## 154      3205                      GARUT   pria  19099
-## 155      3205                      GARUT wanita   2484
-## 156      1106                ACEH TENGAH   pria    970
-## 157      1305                TANAH DATAR   pria    803
-## 158      1305                TANAH DATAR wanita    640
-## 159      3576                  MOJOKERTO   pria   2202
-## 160      3576                  MOJOKERTO wanita   6311
-## 161      6213                MURUNG RAYA   pria    474
-## 162      6213                MURUNG RAYA wanita   1112
-## 163      1603                 MUARA ENIM   pria   6004
-## 164      1603                 MUARA ENIM wanita   3172
-## 165      3174              JAKARTA BARAT   pria   6530
-## 166      7311                       BONE   pria    843
-## 167      6404                KUTAI TIMUR   pria   3193
-## 168      6404                KUTAI TIMUR wanita   1097
-## 169      7408               KOLAKA UTARA   pria   3692
-## 170      7408               KOLAKA UTARA wanita   1468
-## 171      7505            GORONTALO UTARA   pria   1485
-## 172      7505            GORONTALO UTARA wanita   1610
-## 173      1802                  TANGGAMUS   pria   5773
-## 174      1802                  TANGGAMUS wanita   2510
-## 175      7372                   PAREPARE   &lt;NA&gt;     NA
-## 176      7102                   MINAHASA   pria    523
-## 177      7102                   MINAHASA wanita    798
-## 178      7604                     MAMUJU   pria   1476
-## 179      3304               BANJARNEGARA   pria  10853
-## 180      3304               BANJARNEGARA wanita   5718
-## 181      1202           MANDAILING NATAL   pria   1757
-## 182      1202           MANDAILING NATAL wanita   2219
-## 183      9430                 LANNY JAYA   &lt;NA&gt;     NA
-## 184      3201                      BOGOR   pria  28927
-## 185      3201                      BOGOR wanita   8860
-## 186      1215         HUMBANG HASUNDUTAN   pria   1015
-## 187      7313                       WAJO   pria    718
-## 188      7313                       WAJO wanita   2108
-## 189      1311                DHARMASRAYA   pria   2626
-## 190      1209                 SIMALUNGUN   pria    881
-## 191      1209                 SIMALUNGUN wanita   1122
-## 192      1508                       TEBO   pria   5497
-## 193      1508                       TEBO wanita    857
-## 194      3518                    NGANJUK   pria   1962
-## 195      3518                    NGANJUK wanita   4892
-## 196      1506       TANJUNG JABUNG TIMUR   pria   2440
-## 197      1706                   MUKOMUKO   pria    445
-## 198      1706                   MUKOMUKO wanita    523
-## 199      3172              JAKARTA TIMUR wanita   3004
-## 200      7302                  BULUKUMBA   pria   1608
-## 201      7302                  BULUKUMBA wanita    911
-## 202      7312                    SOPPENG   pria   2505
-## 203      7504               BONE BOLANGO   pria   1888
-## 204      7504               BONE BOLANGO wanita    531
-## 205      3510                 BANYUWANGI   pria  10379
-## 206      3510                 BANYUWANGI wanita   9502
-## 207      3511                  BONDOWOSO   pria   7353
-## 208      3511                  BONDOWOSO wanita   1876
-## 209      3521                      NGAWI   pria   5341
-## 210      3521                      NGAWI wanita   8940
-## 211      3674          TANGERANG SELATAN wanita   4980
-## 212      1801              LAMPUNG BARAT   pria   3843
-## 213      1801              LAMPUNG BARAT wanita   5217
-## 214      3603                  TANGERANG   pria  10979
-## 215      3603                  TANGERANG wanita   7347
-## 216      3310                     KLATEN   pria   3502
-## 217      3310                     KLATEN wanita   6526
-## 218      6101                     SAMBAS wanita   1492
-## 219      1118                 PIDIE JAYA   pria    612
-## 220      1118                 PIDIE JAYA wanita    802
-## 221      3309                   BOYOLALI   pria   6627
-## 222      3309                   BOYOLALI wanita   4808
-## 223      3512                  SITUBONDO   pria   8117
-## 224      3512                  SITUBONDO wanita   4494
-## 225      1274              TEBING TINGGI   &lt;NA&gt;     NA
-## 226      1309                    PASAMAN wanita   1757
-## 227      9411                PUNCAK JAYA   pria    358
-## 228      1501                    KERINCI   pria   2377
-## 229      3325                     BATANG   pria  11220
-## 230      3325                     BATANG wanita   8981
-## 231      2104                     LINGGA   &lt;NA&gt;     NA
-## 232      3206                TASIKMALAYA   pria  10966
-## 233      3206                TASIKMALAYA wanita  10761
-## 234      6106                   KETAPANG   pria   5548
-## 235      6106                   KETAPANG wanita   3693
-## 236      1673                 PAGAR ALAM   pria   1686
-## 237      3277                     CIMAHI   pria   8573
-## 238      3277                     CIMAHI wanita   3331
-## 239      6403          KUTAI KARTANEGARA   pria   1609
-## 240      1509                      BUNGO   &lt;NA&gt;     NA
-## 241      7316                   ENREKANG   pria    718
-## 242      7316                   ENREKANG wanita   1480
-## 243      3210                 MAJALENGKA   pria  28692
-## 244      3210                 MAJALENGKA wanita   8299
-## 245      7104           KEPULAUAN TALAUD   pria    871
-## 246      3101           KEPULAUAN SERIBU   pria   3425
-## 247      3401                KULON PROGO   pria   1269
-## 248      3401                KULON PROGO wanita   1868
-## 249      1109                      PIDIE   pria    367
-## 250      8103              MALUKU TENGAH   pria    355
-## 251      8103              MALUKU TENGAH wanita    426
-## 252      3505                     BLITAR   pria   4202
-## 253      1102               ACEH SINGKIL   pria    577
-## 254      1206               TOBA SAMOSIR   &lt;NA&gt;     NA
-## 255      6110                     MELAWI   pria   1022
-## 256      6110                     MELAWI wanita    911
-## 257      1702              REJANG LEBONG   pria    549
-## 258      1702              REJANG LEBONG wanita    616
-## 259      9418                   TOLIKARA   &lt;NA&gt;     NA
-## 260      1813              PESISIR BARAT   &lt;NA&gt;     NA
-## 261      3312                   WONOGIRI   pria   4621
-## 262      3312                   WONOGIRI wanita   6354
-## 263      3503                 TRENGGALEK   pria   2734
-## 264      3503                 TRENGGALEK wanita   6610
-## 265      8171                      AMBON   &lt;NA&gt;     NA
-## 266      1211                       KARO   pria   2505
-## 267      1211                       KARO wanita   5691
-## 268      5306                       BELU   pria    715
-## 269      1312              PASAMAN BARAT   pria   2919
-## 270      1312              PASAMAN BARAT wanita   2914
-## 271      3673                     SERANG   pria   2509
-## 272      3673                     SERANG wanita   6052
-## 273      1871             BANDAR LAMPUNG   pria   1689
-## 274      1671                  PALEMBANG   pria   4582
-## 275      1671                  PALEMBANG wanita   1108
-## 276      7315                    PINRANG   pria    843
-## 277      9471                   JAYAPURA   pria    439
-## 278      9471                   JAYAPURA wanita    415
-## 279      3311                  SUKOHARJO   pria   1615
-## 280      7108     SIAU TAGULANDANG BIARO   pria   1916
-## 281      1473                  D U M A I   pria   4827
-## 282      1473                  D U M A I wanita   1293
-## 283      1408                  BENGKALIS   pria   1242
-## 284      1408                  BENGKALIS wanita   1219
-## 285      1117               BENER MERIAH wanita   2779
-## 286      7301          KEPULAUAN SELAYAR wanita   1026
-## 287      7602            POLEWALI MANDAR wanita    699
-## 288      1108                 ACEH BESAR   pria    652
-## 289      1108                 ACEH BESAR wanita    431
-## 290      5310                      SIKKA   pria   2295
-## 291      5310                      SIKKA wanita    610
-## 292      5304       TIMOR TENGAH SELATAN   pria   2244
-## 293      5304       TIMOR TENGAH SELATAN wanita   1345
-## 294      6202         KOTAWARINGIN TIMUR   pria   1178
-## 295      6202         KOTAWARINGIN TIMUR wanita    410
-## 296      7571                  GORONTALO   pria    699
-## 297      7304                  JENEPONTO   pria   1678
-## 298      1602         OGAN KOMERING ILIR   pria   1263
-## 299      1602         OGAN KOMERING ILIR wanita   4894
-## 300      1222       LABUHAN BATU SELATAN   pria   2918
-## 301      1805             LAMPUNG TENGAH   pria  11223
-## 302      1805             LAMPUNG TENGAH wanita   1392
-## 303      7409                BUTON UTARA   pria   1293
-## 304      7409                BUTON UTARA wanita    601
-## 305      3527                    SAMPANG   pria   2293
-## 306      3216                     BEKASI   pria   6231
-## 307      3216                     BEKASI wanita   3901
-## 308      1310              SOLOK SELATAN   pria   1287
-## 309      1310              SOLOK SELATAN wanita    778
-## 310      3321                      DEMAK   pria  11305
-## 311      3321                      DEMAK wanita   3908
-## 312      3208                   KUNINGAN   pria  10392
-## 313      3208                   KUNINGAN wanita   3901
-## 314      1173                     LANGSA   pria    445
-## 315      1173                     LANGSA wanita    745
-## 316      3279                     BANJAR   pria   5075
-## 317      5319            MANGGARAI TIMUR   pria   6022
-## 318      5319            MANGGARAI TIMUR wanita   2220
-## 319      1104              ACEH TENGGARA wanita   1717
-## 320      1613           MUSI RAWAS UTARA   &lt;NA&gt;     NA
-## 321      1103               ACEH SELATAN   pria    622
-## 322      1103               ACEH SELATAN wanita    772
-## 323      6401                      PASER   pria   2042
-## 324      6401                      PASER wanita   1119
-## 325      3573                     MALANG   &lt;NA&gt;     NA
-## 326      7325                 LUWU TIMUR   pria   1658
-## 327      7325                 LUWU TIMUR wanita    850
-## 328      3303                PURBALINGGA   pria   6496
-## 329      3303                PURBALINGGA wanita   9003
-## 330      6471                 BALIKPAPAN   pria   2108
-## 331      6471                 BALIKPAPAN wanita   2029
-## 332      1409                ROKAN HILIR   pria   6319
-## 333      1409                ROKAN HILIR wanita   1138
-## 334      7407                   WAKATOBI   pria    475
-## 335      7172                     BITUNG   &lt;NA&gt;     NA
-## 336      8107         SERAM BAGIAN TIMUR   pria   1330
-## 337      8107         SERAM BAGIAN TIMUR wanita    388
-## 338      7208             PARIGI MOUTONG   pria   1369
-## 339      7208             PARIGI MOUTONG wanita    581
-## 340      3523                      TUBAN   pria  22265
-## 341      3523                      TUBAN wanita   3923
-## 342      5303                     KUPANG   pria   1141
-## 343      5303                     KUPANG wanita   1345
-## 344      6405                      BERAU   pria   2458
-## 345      7503                   POHUWATO   pria   2062
-## 346      7503                   POHUWATO wanita    715
-## 347      1601          OGAN KOMERING ULU   &lt;NA&gt;     NA
-## 348      3373                   SALATIGA   pria   1602
-## 349      3571                     KEDIRI wanita   1878
-## 350      5107                KARANG ASEM   pria   1811
-## 351      5107                KARANG ASEM wanita   5442
-## 352      3217              BANDUNG BARAT   pria  13010
-## 353      6303                     BANJAR   pria   2525
-## 354      6303                     BANJAR wanita   1798
-## 355      2102                     BINTAN   pria   1147
-## 356      7271                       PALU wanita   1256
-## 357      5201               LOMBOK BARAT   pria   2258
-## 358      5201               LOMBOK BARAT wanita   2254
-## 359      1372                      SOLOK   &lt;NA&gt;     NA
-## 360      3404                     SLEMAN   pria   1669
-## 361      3271                      BOGOR   pria   5166
-## 362      2101                    KARIMUN   pria    410
-## 363      7209               TOJO UNA-UNA   pria   2586
-## 364      7209               TOJO UNA-UNA wanita   1516
-## 365      7173                    TOMOHON wanita    516
-## 366      3672                    CILEGON   pria   4824
-## 367      3672                    CILEGON wanita   2467
-## 368      1208                     ASAHAN   pria   6075
-## 369      1208                     ASAHAN wanita    963
-## 370      3301                    CILACAP   pria   6973
-## 371      3301                    CILACAP wanita   4328
-## 372      5208               LOMBOK UTARA   pria   3520
-## 373      3504                TULUNGAGUNG   pria  11194
-## 374      3504                TULUNGAGUNG wanita   5444
-## 375      6208                    SERUYAN   pria   4558
-## 376      6208                    SERUYAN wanita   1194
-## 377      3203                    CIANJUR   pria  24671
-## 378      3203                    CIANJUR wanita  13765
-## 379      5301                SUMBA BARAT   pria   1062
-## 380      7308                      MAROS   pria    971
-## 381      7308                      MAROS wanita   1635
-## 382      3579                       BATU   pria  11089
-## 383      3579                       BATU wanita   7165
-## 384      3322                   SEMARANG   pria   4509
-## 385      3322                   SEMARANG wanita   9542
-## 386      7111    BOLAANG MONGONDOW TIMUR   pria    531
-## 387      9417         PEGUNUNGAN BINTANG wanita    395
-## 388      1605                 MUSI RAWAS   pria   1279
-## 389      1605                 MUSI RAWAS wanita   4488
-## 390      6103                     LANDAK   pria    735
-## 391      6103                     LANDAK wanita   2631
-## 392      6309                   TABALONG   pria    954
-## 393      8104                       BURU   pria   1777
-## 394      6308          HULU SUNGAI UTARA   &lt;NA&gt;     NA
-## 395      1111                 ACEH UTARA   &lt;NA&gt;     NA
-## 396      1302            PESISIR SELATAN   pria   2655
-## 397      1672                 PRABUMULIH   pria   2618
-## 398      1672                 PRABUMULIH wanita   1009
-## 399      9171                     SORONG   pria    344
-## 400      1375                BUKITTINGGI   &lt;NA&gt;     NA
-## 401      5311                       ENDE   pria   1898
-## 402      5311                       ENDE wanita   2673
-## 403      1377                   PARIAMAN   &lt;NA&gt;     NA
-## 404      3514                   PASURUAN   pria   5429
-## 405      7371                   MAKASSAR   pria    820
-## 406      7371                   MAKASSAR wanita   2108
-## 407      7606              MAMUJU TENGAH   pria   1880
-## 408      7109          MINAHASA TENGGARA   pria    968
-## 409      9434                    DOGIYAI   &lt;NA&gt;     NA
-## 410      3313                KARANGANYAR   pria   7756
-## 411      3313                KARANGANYAR wanita   9812
-## 412      1112            ACEH BARAT DAYA   &lt;NA&gt;     NA
-## 413      7206                  TOLI-TOLI   pria   1217
-## 414      7206                  TOLI-TOLI wanita   1387
-## 415      1308            LIMA PULUH KOTA wanita   1778
-## 416      1201                       NIAS   pria   2319
-## 417      1201                       NIAS wanita   1735
-## 418      1902                   BELITUNG   pria   1320
-## 419      1902                   BELITUNG wanita   1231
-## 420      9408            KEPULAUAN YAPEN wanita    651
-## 421      1604                      LAHAT   pria   1636
-## 422      3574                PROBOLINGGO   pria   1826
-## 423      3574                PROBOLINGGO wanita   2100
-## 424      3319                      KUDUS   pria   7476
-## 425      3319                      KUDUS wanita   4377
-## 426      1307                       AGAM wanita   1470
-## 427      3209                    CIREBON   pria  15328
-## 428      3209                    CIREBON wanita   3331
-## 429      1705                     SELUMA   pria   1815
-## 430      3508                   LUMAJANG   pria   7481
-## 431      3508                   LUMAJANG wanita   2445
-## 432      6205               BARITO UTARA   pria    564
-## 433      6205               BARITO UTARA wanita    541
-## 434      5204                    SUMBAWA   pria   2193
-## 435      9104              TELUK BINTUNI   &lt;NA&gt;     NA
-## 436      1504                BATANG HARI   pria   2498
-## 437      1504                BATANG HARI wanita   1429
-## 438      7318                TANA TORAJA   pria    816
-## 439      1704                       KAUR   pria    922
-## 440      3329                     BREBES   pria  10616
-## 441      1373                SAWAH LUNTO   pria   1251
-## 442      1808               TULANGBAWANG   pria   3696
-## 443      3516                  MOJOKERTO   pria   2870
-## 444      3272                   SUKABUMI   pria  10332
-## 445      1224                 NIAS UTARA   pria   2306
-## 446      1224                 NIAS UTARA wanita   1965
-## 447      1101                   SIMEULUE   pria   1656
-## 448      6212               BARITO TIMUR   pria   1228
-## 449      5207              SUMBAWA BARAT   pria   1330
-## 450      5207              SUMBAWA BARAT wanita   2469
-## 451      5205                      DOMPU   pria   1291
-## 452      5205                      DOMPU wanita   1244
-## 453      3519                     MADIUN   pria   6875
-## 454      3519                     MADIUN wanita   2446
-## 455      1812        TULANG BAWANG BARAT   &lt;NA&gt;     NA
-## 456      6306        HULU SUNGAI SELATAN   pria   4166
-## 457      6306        HULU SUNGAI SELATAN wanita    554
-## 458      9436                     DEIYAI wanita    375
-## 459      1810                  PRINGSEWU   pria   4956
-## 460      1810                  PRINGSEWU wanita   1393
-## 461      7411               KOLAKA TIMUR   pria    729
-## 462      7411               KOLAKA TIMUR wanita    612
-## 463      3374                   SEMARANG   pria   1720
-## 464      3374                   SEMARANG wanita   3403
-## 465      3402                     BANTUL   pria   3823
-## 466      3522                 BOJONEGORO   pria   6604
-## 467      3522                 BOJONEGORO wanita   7359
-## 468      5102                    TABANAN wanita   2094
-## 469      3376                      TEGAL   pria   1794
-## 470      7307                     SINJAI   pria   2506
-## 471      7307                     SINJAI wanita    850
-## 472      3314                     SRAGEN   &lt;NA&gt;     NA
-## 473      7373                     PALOPO   pria   2074
-## 474      7373                     PALOPO wanita    911
-## 475      9402                 JAYAWIJAYA   pria   1251
-## 476      3328                      TEGAL   pria  12022
-## 477      3328                      TEGAL wanita   3190
-## 478      9415                      ASMAT   pria    380
-## 479      9415                      ASMAT wanita   1943
-## 480      1804              LAMPUNG TIMUR   pria   4062
-## 481      1804              LAMPUNG TIMUR wanita   2738
-## 482      1403            INDRAGIRI HILIR   pria   1219
-## 483      1403            INDRAGIRI HILIR wanita   2438
-## 484      8102            MALUKU TENGGARA   pria    495
-## 485      8102            MALUKU TENGGARA wanita    388
-## 486      7322                 LUWU UTARA wanita    784
-## 487      1376                 PAYAKUMBUH   pria   1666
-## 488      9416                   YAHUKIMO   pria    420
-## 489      5318                    NAGEKEO wanita    671
-## 490      5203               LOMBOK TIMUR   pria   3047
-## 491      5203               LOMBOK TIMUR wanita   1264
-## 492      1703             BENGKULU UTARA   &lt;NA&gt;     NA
-## 493      3528                  PAMEKASAN   pria   4647
-## 494      3528                  PAMEKASAN wanita  11158
-## 495      7404                     KOLAKA   pria    625
-## 496      3215                   KARAWANG   pria  13514
-## 497      3215                   KARAWANG wanita   3123
-## 498      5312                      NGADA   pria   1430
-## 499      5312                      NGADA wanita   1315
-## 500      1218            SERDANG BEDAGAI   pria   4022
-## 501      7211               BANGGAI LAUT   pria    721
-## 502      7207                       BUOL   pria    754
-## 503      7207                       BUOL wanita    674
-## 504      3305                    KEBUMEN   pria   8626
-## 505      3305                    KEBUMEN wanita   2101
-## 506      9427                    SUPIORI   &lt;NA&gt;     NA
-## 507      1806              LAMPUNG UTARA   pria   6534
-## 508      1806              LAMPUNG UTARA wanita   2468
-## 509      6502                   BULUNGAN   pria    847
-## 510      1212               DELI SERDANG   pria   3446
-## 511      1212               DELI SERDANG wanita   3751
-## 512      6402                KUTAI BARAT   pria   2784
-## 513      6402                KUTAI BARAT wanita   2190
-## 514      3602                      LEBAK   pria  22657
-## 515      3602                      LEBAK wanita   6004
-## 516      3307                   WONOSOBO   pria  11620
-## 517      3307                   WONOSOBO wanita   8805
-## 518      3509                     JEMBER   pria  13037
-## 519      3509                     JEMBER wanita   4288
-## 520      8206            HALMAHERA TIMUR   pria   1835
-## 521      8206            HALMAHERA TIMUR wanita    567
-## 522      7203                   MOROWALI   pria    754
-## 523      1220         PADANG LAWAS UTARA   &lt;NA&gt;     NA
-## 524      1276                     BINJAI   pria   1220
-## 525      1276                     BINJAI wanita   1122
-## 526      1872                      METRO wanita   2169
-## 527      7471                    KENDARI   &lt;NA&gt;     NA
-## 528      8106         SERAM BAGIAN BARAT   &lt;NA&gt;     NA
-## 529      1275                      MEDAN   pria   3655
-## 530      1402             INDRAGIRI HULU   pria   7263
-## 531      1708                  KEPAHIANG   pria    712
-## 532      1807                  WAY KANAN   pria   1831
-## 533      1807                  WAY KANAN wanita   1507
-## 534      5103                     BADUNG   &lt;NA&gt;     NA
-## 535      6172                 SINGKAWANG   pria   1514
-## 536      3175              JAKARTA UTARA   pria   2633
-## 537      1172                     SABANG wanita    470
-## 538      5171                   DENPASAR   pria   1252
-## 539      5171                   DENPASAR wanita   2619
-## 540      1505                MUARO JAMBI   pria   2204
-## 541      1505                MUARO JAMBI wanita    857
-## 542      8271                    TERNATE   pria    497
-## 543      9426                    WAROPEN   &lt;NA&gt;     NA
-## 544      9107                     SORONG   pria    774
-## 545      9107                     SORONG wanita    218
-## 546      8207              PULAU MOROTAI   pria    733
-## 547      8207              PULAU MOROTAI wanita    944
-## 548      7107    BOLAANG MONGONDOW UTARA   pria   1199
-## 549      7402                       MUNA   &lt;NA&gt;     NA
-## 550      7326               TORAJA UTARA   pria    816
-## 551      3513                PROBOLINGGO   pria  12124
-## 552      3513                PROBOLINGGO wanita   6940
-## 553      3515                   SIDOARJO   pria   4068
-## 554      3515                   SIDOARJO wanita   3872
-## 555      7406                    BOMBANA   pria   1354
-## 556      8105              KEPULAUAN ARU   pria    416
-## 557      8105              KEPULAUAN ARU wanita    472
-## 558      5202              LOMBOK TENGAH wanita   7762
-## 559      3326                 PEKALONGAN   pria  14194
-## 560      3326                 PEKALONGAN wanita   6381
-## 561      1171                 BANDA ACEH   &lt;NA&gt;     NA
-## 562      6104                  PONTIANAK   pria   3213
-## 563      6104                  PONTIANAK wanita   1811
-## 564      1105                 ACEH TIMUR   pria   1466
-## 565      1105                 ACEH TIMUR wanita    611
-## 566      9102                    KAIMANA wanita    350
-## 567      9403                   JAYAPURA   pria   1220
-## 568      3218                PANGANDARAN   pria   5925
-## 569      9432                     YALIMO   pria   1292
-## 570      3577                     MADIUN   pria   2077
-## 571      7305                    TAKALAR wanita   1550
-## 572      3403               GUNUNG KIDUL   pria   6887
-## 573      3403               GUNUNG KIDUL wanita   1674
-## 574      6107                    SINTANG   &lt;NA&gt;     NA
-## 575      3320                     JEPARA   pria   5365
-## 576      1272              TANJUNG BALAI   pria   2763
-## 577      1272              TANJUNG BALAI wanita   1112
-## 578      8172                       TUAL wanita    417
-## 579      3173              JAKARTA PUSAT   pria   2633
-## 580      3173              JAKARTA PUSAT wanita   6981
-## 581      6203                     KAPUAS   pria   2916
-## 582      6203                     KAPUAS wanita   1664
-## 583      1771                   BENGKULU   pria   1607
-## 584      1771                   BENGKULU wanita    696
-## 585      8272           TIDORE KEPULAUAN   &lt;NA&gt;     NA
-## 586      1203           TAPANULI SELATAN   pria   2232
-## 587      1203           TAPANULI SELATAN wanita   1654
-## 588      6307         HULU SUNGAI TENGAH   pria   2510
-## 589      6307         HULU SUNGAI TENGAH wanita   1877
-## 590      7110  BOLAANG MONGONDOW SELATAN   pria    403
-## 591      7171                     MANADO   pria   2888
-## 592      7171                     MANADO wanita    798
-## 593      7601                     MAJENE   pria   2364
-## 594      7601                     MAJENE wanita    294
-## 595      3276                      DEPOK   pria   3138
-## 596      2105          KEPULAUAN ANAMBAS   &lt;NA&gt;     NA
-## 597      9410                     PANIAI   pria    554
-## 598      9410                     PANIAI wanita    512
-## 599      5105                  KLUNGKUNG   pria   3510
-## 600      1205             TAPANULI UTARA   pria    892
-## 601      1205             TAPANULI UTARA wanita    963
-## 602      3526                  BANGKALAN   pria  19445
-## 603      3526                  BANGKALAN wanita   7957
-## 604      6210               PULANG PISAU   pria   3167
-## 605      6210               PULANG PISAU wanita   1038
-## 606      1410          KEPULAUAN MERANTI   pria   3891
-## 607      9433                     PUNCAK   &lt;NA&gt;     NA
-## 608      1811                     MESUJI   pria   7726
-## 609      1811                     MESUJI wanita   3141
-## 610      6472                  SAMARINDA   pria   2987
-## 611      6472                  SAMARINDA wanita   1977
-## 612      1903               BANGKA BARAT   pria   1239
-## 613      8101      MALUKU TENGGARA BARAT   pria   1231
-## 614      8101      MALUKU TENGGARA BARAT wanita    414
-## 615      6474                    BONTANG   pria    783
-## 616      6474                    BONTANG wanita   1097
-## 617      8204          HALMAHERA SELATAN   pria    609
-## 618      8204          HALMAHERA SELATAN wanita   1107
-## 619      3506                     KEDIRI   pria  11732
-## 620      3506                     KEDIRI wanita   6650
-## 621      7317                       LUWU   &lt;NA&gt;     NA
-## 622      7105           MINAHASA SELATAN   pria    368
-## 623      7105           MINAHASA SELATAN wanita    854
-## 624      1277            PADANGSIDIMPUAN   &lt;NA&gt;     NA
-## 625      5101                   JEMBRANA   pria    791
-## 626      5101                   JEMBRANA wanita   4571
-## 627      3671                  TANGERANG   pria   6062
-## 628      3308                   MAGELANG   pria   4796
-## 629      3308                   MAGELANG wanita   6440
-## 630      3529                    SUMENEP   pria   4102
-## 631      3529                    SUMENEP wanita   8898
-## 632      9409                BIAK NUMFOR   &lt;NA&gt;     NA
-## 633      9404                     NABIRE   &lt;NA&gt;     NA
-## 634      3306                  PURWOREJO   pria   4307
-## 635      3306                  PURWOREJO wanita   2343
-## 636      1306            PADANG PARIAMAN   &lt;NA&gt;     NA
-## 637      7303                   BANTAENG   pria   3056
-## 638      1406                     KAMPAR   pria   3371
-## 639      1406                     KAMPAR wanita   1409
-## 640      3471                 YOGYAKARTA   pria   1986
-## 641      5271                    MATARAM wanita   2806
-## 642      1606             MUSI BANYUASIN   pria   3347
-## 643      3375                 PEKALONGAN   pria   2683
-## 644      9401                    MERAUKE   pria    915
-## 645      1303                      SOLOK wanita    677
-## 646      6271              PALANGKA RAYA   pria   1172
-## 647      6304               BARITO KUALA wanita   2018
-## 648      8205            HALMAHERA UTARA   pria   1155
-## 649      7201          BANGGAI KEPULAUAN   pria    857
-## 650      6111               KAYONG UTARA   pria    906
-## 651      3278                TASIKMALAYA wanita   9867
-## 652      8108          MALUKU BARAT DAYA   pria    399
-## 653      3204                    BANDUNG   pria  35637
-## 654      3214                 PURWAKARTA   pria   5427
-## 655      6409        PENAJAM PASER UTARA   pria   1832
-## 656      1610                  OGAN ILIR   pria   8647
-## 657      1610                  OGAN ILIR wanita   1412
-## 658      7605               MAMUJU UTARA   pria    964
-## 659      7605               MAMUJU UTARA wanita    698
-## 660      5314                  ROTE NDAO   pria   1668
-## 661      5314                  ROTE NDAO wanita   1290
-## 662      7310                      BARRU   pria   3711
-## 663      7310                      BARRU wanita    957
-## 664      3502                   PONOROGO   pria  13500
-## 665      1404                  PELALAWAN   pria   3800
-## 666      1611               EMPAT LAWANG   &lt;NA&gt;     NA
-## 667      1904              BANGKA TENGAH   pria    725
-## 668      1904              BANGKA TENGAH wanita    813
-## 669      6109                    SEKADAU   pria   2596
-## 670      6109                    SEKADAU wanita    820
-## 671      8208              PULAU TALIABU   pria    454
-## 672      1113                  GAYO LUES   &lt;NA&gt;     NA
-## 673      1572               SUNGAI PENUH   &lt;NA&gt;     NA
-## 674      5308                    LEMBATA   pria    566
-## 675      5308                    LEMBATA wanita    399
-## 676      1401           KUANTAN SINGINGI   pria   2462
-## 677      1401           KUANTAN SINGINGI wanita   1293
-## 678      1901                     BANGKA wanita    643
-## 679      1107                 ACEH BARAT   &lt;NA&gt;     NA
-## 680      7210                       SIGI   pria    595
-## 681      7174                 KOTAMOBAGU wanita    905
-## 682      9109                   TAMBRAUW   pria    324
-## 683      1225                 NIAS BARAT   pria   1907
-## 684      6206                   SUKAMARA   &lt;NA&gt;     NA
-## 685      6204             BARITO SELATAN   pria   2341
-## 686      1906             BELITUNG TIMUR   pria   1870
-## 687      9106             SORONG SELATAN   pria   1266
-## 688      1301         KEPULAUAN MENTAWAI   pria    745
-## 689      1301         KEPULAUAN MENTAWAI wanita    781
-## 690      3274                    CIREBON wanita   3123
-## 691      6211                 GUNUNG MAS   &lt;NA&gt;     NA
-## 692      1407                 ROKAN HULU   pria   2958
-## 693      1407                 ROKAN HULU wanita    952
-## 694      5272                       BIMA   pria   1050
-## 695      5320                SABU RAIJUA   pria   1335
-## 696      1502                   MERANGIN   pria   5312
-## 697      5206                       BIMA   pria   2485
-## 698      5206                       BIMA wanita   1013
-## 699      1507       TANJUNG JABUNG BARAT   pria   4062
-## 700      9105                  MANOKWARI   &lt;NA&gt;     NA
-## 701      8202           HALMAHERA TENGAH   &lt;NA&gt;     NA
-## 702      5305         TIMOR TENGAH UTARA wanita   2256
-## 703      1612 PENUKAL ABAB LEMATANG ILIR   pria   1456
-## 704      1612 PENUKAL ABAB LEMATANG ILIR wanita   1716
-## 705      1674               LUBUKLINGGAU   pria   1544
-## 706      1110                    BIREUEN   &lt;NA&gt;     NA
-## 707      7405             KONAWE SELATAN   pria   3250
-## 708      7212             MOROWALI UTARA wanita   1439
-## 709      9110                    MAYBRAT   &lt;NA&gt;     NA
-## 710      3575                   PASURUAN   pria   1972
-## 711      7101          BOLAANG MONGONDOW wanita    360
-## 712      9435                 INTAN JAYA   &lt;NA&gt;     NA
-## 713      3371                   MAGELANG   &lt;NA&gt;     NA
-## 714      9412                     MIMIKA   pria    542
-## 715      9412                     MIMIKA wanita    349
-## 716      1115                 NAGAN RAYA   &lt;NA&gt;     NA
-## 717      9112           PEGUNUNGAN ARFAK   &lt;NA&gt;     NA
-## 718      6571                    TARAKAN wanita    270
-## 719      6301                 TANAH LAUT   pria    890
-## 720      9108                 RAJA AMPAT   &lt;NA&gt;     NA
-## 721      3316                      BLORA   &lt;NA&gt;     NA
-## 722      1116                  ACEH JAYA   &lt;NA&gt;     NA
-## 723      9111          MANOKWARI SELATAN   &lt;NA&gt;     NA
-## 724      7204                       POSO wanita   1529
-## 725      1608  OGAN KOMERING ULU SELATAN   pria   2626
-## 726      1608  OGAN KOMERING ULU SELATAN wanita   1289
-## 727      9413               BOVEN DIGOEL   pria    998
-## 728      1709            BENGKULU TENGAH   pria   1617
-## 729      1709            BENGKULU TENGAH wanita    629
-## 730      1216              PAKPAK BHARAT   &lt;NA&gt;     NA
-## 731      6501                    MALINAU   pria    506
-## 732      6501                    MALINAU wanita    240
-## 733      2103                     NATUNA   pria    124
-## 734      1503                 SAROLANGUN   pria   3322
-## 735      9429                      NDUGA wanita    365
-## 736      9103              TELUK WONDAMA   &lt;NA&gt;     NA
-## 737      6311                   BALANGAN   pria    890
-## 738      6311                   BALANGAN wanita   1989
-## 739      6411               MAHAKAM HULU   &lt;NA&gt;     NA
-## 740      7412           KONAWE KEPULAUAN   &lt;NA&gt;     NA
+##      KODE_KABB                   NAMA_KAB     jk  Freq
+## 1         3520                    MAGETAN   pria     0
+## 2         3520                    MAGETAN wanita  4481
+## 3         3517                    JOMBANG   pria 10227
+## 4         3517                    JOMBANG wanita     0
+## 5         1571                      JAMBI   pria  1368
+## 6         1571                      JAMBI wanita     0
+## 7         6171                  PONTIANAK   pria     0
+## 8         6171                  PONTIANAK wanita     0
+## 9         5108                   BULELENG   pria   894
+## 10        5108                   BULELENG wanita  2388
+## 11        1273           PEMATANG SIANTAR   pria  1064
+## 12        1273           PEMATANG SIANTAR wanita  1122
+## 13        1204            TAPANULI TENGAH   pria     0
+## 14        1204            TAPANULI TENGAH wanita   827
+## 15        3327                   PEMALANG   pria 12290
+## 16        3327                   PEMALANG wanita  6745
+## 17        7314          SIDENRENG RAPPANG   pria   863
+## 18        7314          SIDENRENG RAPPANG wanita  2152
+## 19        1971             PANGKAL PINANG   pria   514
+## 20        1971             PANGKAL PINANG wanita   534
+## 21        1371                     PADANG   pria     0
+## 22        1371                     PADANG wanita   822
+## 23        6372                BANJAR BARU   pria  2749
+## 24        6372                BANJAR BARU wanita   830
+## 25        7306                       GOWA   pria   971
+## 26        7306                       GOWA wanita   971
+## 27        3212                  INDRAMAYU   pria  8903
+## 28        3212                  INDRAMAYU wanita  7232
+## 29        1609    OGAN KOMERING ULU TIMUR   pria  2287
+## 30        1609    OGAN KOMERING ULU TIMUR wanita  1494
+## 31        3315                   GROBOGAN   pria  5834
+## 32        3315                   GROBOGAN wanita  1638
+## 33        3171            JAKARTA SELATAN   pria     0
+## 34        3171            JAKARTA SELATAN wanita  7214
+## 35        5104                    GIANYAR   pria   840
+## 36        5104                    GIANYAR wanita   980
+## 37        5315            MANGGARAI BARAT   pria   675
+## 38        5315            MANGGARAI BARAT wanita     0
+## 39        6112                  KUBU RAYA   pria  2711
+## 40        6112                  KUBU RAYA wanita     0
+## 41        2172             TANJUNG PINANG   pria  1235
+## 42        2172             TANJUNG PINANG wanita     0
+## 43        8109               BURU SELATAN   pria   815
+## 44        8109               BURU SELATAN wanita     0
+## 45        2171                  B A T A M   pria  1079
+## 46        2171                  B A T A M wanita     0
+## 47        3213                     SUBANG   pria     0
+## 48        3213                     SUBANG wanita  2484
+## 49        1701           BENGKULU SELATAN   pria     0
+## 50        1701           BENGKULU SELATAN wanita     0
+## 51        6504                    NUNUKAN   pria  1422
+## 52        6504                    NUNUKAN wanita     0
+## 53        7202                    BANGGAI   pria  3319
+## 54        7202                    BANGGAI wanita   708
+## 55        5307                       ALOR   pria   465
+## 56        5307                       ALOR wanita   649
+## 57        3501                    PACITAN   pria  7367
+## 58        3501                    PACITAN wanita  2275
+## 59        7403                     KONAWE   pria     0
+## 60        7403                     KONAWE wanita     0
+## 61        3211                   SUMEDANG   pria  7238
+## 62        3211                   SUMEDANG wanita  9153
+## 63        3207                     CIAMIS   pria  6240
+## 64        3207                     CIAMIS wanita     0
+## 65        5302                SUMBA TIMUR   pria  1782
+## 66        5302                SUMBA TIMUR wanita     0
+## 67        5317           SUMBA BARAT DAYA   pria  1475
+## 68        5317           SUMBA BARAT DAYA wanita   649
+## 69        3601                 PANDEGLANG   pria 10702
+## 70        3601                 PANDEGLANG wanita  8414
+## 71        1207               LABUHAN BATU   pria  5220
+## 72        1207               LABUHAN BATU wanita     0
+## 73        1114               ACEH TAMIANG   pria   869
+## 74        1114               ACEH TAMIANG wanita     0
+## 75        9420                     KEEROM   pria     0
+## 76        9420                     KEEROM wanita     0
+## 77        6108                KAPUAS HULU   pria     0
+## 78        6108                KAPUAS HULU wanita  1492
+## 79        3578                   SURABAYA   pria  2286
+## 80        3578                   SURABAYA wanita  4358
+## 81        1471                  PEKANBARU   pria  3152
+## 82        1471                  PEKANBARU wanita     0
+## 83        5309               FLORES TIMUR   pria   541
+## 84        5309               FLORES TIMUR wanita  1259
+## 85        6302                  KOTA BARU   pria  1897
+## 86        6302                  KOTA BARU wanita     0
+## 87        6305                      TAPIN   pria  2762
+## 88        6305                      TAPIN wanita   669
+## 89        3323                 TEMANGGUNG   pria  6689
+## 90        3323                 TEMANGGUNG wanita  4643
+## 91        1174                LHOKSEUMAWE   pria     0
+## 92        1174                LHOKSEUMAWE wanita     0
+## 93        3525                     GRESIK   pria 11019
+## 94        3525                     GRESIK wanita  4096
+## 95        8201            HALMAHERA BARAT   pria   301
+## 96        8201            HALMAHERA BARAT wanita   504
+## 97        1221               PADANG LAWAS   pria     0
+## 98        1221               PADANG LAWAS wanita   963
+## 99        3302                   BANYUMAS   pria 13112
+## 100       3302                   BANYUMAS wanita  4077
+## 101       1304                  SIJUNJUNG   pria  2615
+## 102       1304                  SIJUNJUNG wanita     0
+## 103       5313                  MANGGARAI   pria  1203
+## 104       5313                  MANGGARAI wanita   649
+## 105       3572                     BLITAR   pria     0
+## 106       3572                     BLITAR wanita     0
+## 107       1278               GUNUNGSITOLI   pria     0
+## 108       1278               GUNUNGSITOLI wanita   967
+## 109       9431           MAMBERAMO TENGAH   pria   380
+## 110       9431           MAMBERAMO TENGAH wanita     0
+## 111       1374             PADANG PANJANG   pria     0
+## 112       1374             PADANG PANJANG wanita     0
+## 113       8203             KEPULAUAN SULA   pria     0
+## 114       8203             KEPULAUAN SULA wanita   755
+## 115       7410               KONAWE UTARA   pria   625
+## 116       7410               KONAWE UTARA wanita     0
+## 117       6207                   LAMANDAU   pria  1863
+## 118       6207                   LAMANDAU wanita     0
+## 119       1707                     LEBONG   pria     0
+## 120       1707                     LEBONG wanita  1086
+## 121       6201         KOTAWARINGIN BARAT   pria  1055
+## 122       6201         KOTAWARINGIN BARAT wanita   541
+## 123       7103          KEPULAUAN SANGIHE   pria   891
+## 124       7103          KEPULAUAN SANGIHE wanita     0
+## 125       5371                     KUPANG   pria   865
+## 126       5371                     KUPANG wanita     0
+## 127       3273                    BANDUNG   pria  3109
+## 128       3273                    BANDUNG wanita  7386
+## 129       9101                     FAKFAK   pria   336
+## 130       9101                     FAKFAK wanita   637
+## 131       1213                    LANGKAT   pria  2112
+## 132       1213                    LANGKAT wanita  1040
+## 133       7501                    BOALEMO   pria  1264
+## 134       7501                    BOALEMO wanita   385
+## 135       1214               NIAS SELATAN   pria   959
+## 136       1214               NIAS SELATAN wanita     0
+## 137       9419                      SARMI   pria   510
+## 138       9419                      SARMI wanita   422
+## 139       6371                BANJARMASIN   pria  2109
+## 140       6371                BANJARMASIN wanita     0
+## 141       9428             MAMBERAMO RAYA   pria     0
+## 142       9428             MAMBERAMO RAYA wanita     0
+## 143       3317                    REMBANG   pria  8485
+## 144       3317                    REMBANG wanita  8631
+## 145       3202                   SUKABUMI   pria 28248
+## 146       3202                   SUKABUMI wanita 13688
+## 147       6310                TANAH BUMBU   pria  2795
+## 148       6310                TANAH BUMBU wanita     0
+## 149       1405                    S I A K   pria  1444
+## 150       1405                    S I A K wanita     0
+## 151       5321                     MALAKA   pria     0
+## 152       5321                     MALAKA wanita   738
+## 153       6503                TANA TIDUNG   pria     0
+## 154       6503                TANA TIDUNG wanita     0
+## 155       7309   PANGKAJENE DAN KEPULAUAN   pria   971
+## 156       7309   PANGKAJENE DAN KEPULAUAN wanita     0
+## 157       1607                 BANYU ASIN   pria  5178
+## 158       1607                 BANYU ASIN wanita     0
+## 159       6105                    SANGGAU   pria  1723
+## 160       6105                    SANGGAU wanita   820
+## 161       1809                  PESAWARAN   pria  7837
+## 162       1809                  PESAWARAN wanita     0
+## 163       7205                   DONGGALA   pria  1080
+## 164       7205                   DONGGALA wanita   833
+## 165       1223         LABUHAN BATU UTARA   pria  3143
+## 166       1223         LABUHAN BATU UTARA wanita  1898
+## 167       7401                      BUTON   pria     0
+## 168       7401                      BUTON wanita  1261
+## 169       3604                     SERANG   pria  2559
+## 170       3604                     SERANG wanita  8080
+## 171       6209                   KATINGAN   pria     0
+## 172       6209                   KATINGAN wanita  1849
+## 173       7502                  GORONTALO   pria  2315
+## 174       7502                  GORONTALO wanita     0
+## 175       3372                  SURAKARTA   pria  1427
+## 176       3372                  SURAKARTA wanita     0
+## 177       7472                     BAUBAU   pria   576
+## 178       7472                     BAUBAU wanita     0
+## 179       3324                     KENDAL   pria  6996
+## 180       3324                     KENDAL wanita  2067
+## 181       7603                     MAMASA   pria  2104
+## 182       7603                     MAMASA wanita     0
+## 183       5316               SUMBA TENGAH   pria  1241
+## 184       5316               SUMBA TENGAH wanita     0
+## 185       7106             MINAHASA UTARA   pria  1683
+## 186       7106             MINAHASA UTARA wanita     0
+## 187       1803            LAMPUNG SELATAN   pria  3234
+## 188       1803            LAMPUNG SELATAN wanita     0
+## 189       3507                     MALANG   pria 12690
+## 190       3507                     MALANG wanita  5027
+## 191       3318                       PATI   pria  7909
+## 192       3318                       PATI wanita  6578
+## 193       3524                   LAMONGAN   pria  1773
+## 194       3524                   LAMONGAN wanita  3598
+## 195       6102                 BENGKAYANG   pria  1899
+## 196       6102                 BENGKAYANG wanita  1930
+## 197       3275                     BEKASI   pria  6247
+## 198       3275                     BEKASI wanita     0
+## 199       1905             BANGKA SELATAN   pria  4484
+## 200       1905             BANGKA SELATAN wanita   761
+## 201       1219                  BATU BARA   pria  3193
+## 202       1219                  BATU BARA wanita   974
+## 203       5106                     BANGLI   pria  1015
+## 204       5106                     BANGLI wanita  3034
+## 205       1210                      DAIRI   pria  2713
+## 206       1210                      DAIRI wanita  1654
+## 207       1271                    SIBOLGA   pria  1232
+## 208       1271                    SIBOLGA wanita     0
+## 209       1217                    SAMOSIR   pria     0
+## 210       1217                    SAMOSIR wanita   908
+## 211       1175               SUBULUSSALAM   pria   444
+## 212       1175               SUBULUSSALAM wanita     0
+## 213       9414                      MAPPI   pria   497
+## 214       9414                      MAPPI wanita     0
+## 215       3205                      GARUT   pria 19099
+## 216       3205                      GARUT wanita  2484
+## 217       1106                ACEH TENGAH   pria   970
+## 218       1106                ACEH TENGAH wanita     0
+## 219       1305                TANAH DATAR   pria   803
+## 220       1305                TANAH DATAR wanita   640
+## 221       3576                  MOJOKERTO   pria  2202
+## 222       3576                  MOJOKERTO wanita  6311
+## 223       6213                MURUNG RAYA   pria   474
+## 224       6213                MURUNG RAYA wanita  1112
+## 225       1603                 MUARA ENIM   pria  6004
+## 226       1603                 MUARA ENIM wanita  3172
+## 227       3174              JAKARTA BARAT   pria  6530
+## 228       3174              JAKARTA BARAT wanita     0
+## 229       7311                       BONE   pria   843
+## 230       7311                       BONE wanita     0
+## 231       6404                KUTAI TIMUR   pria  3193
+## 232       6404                KUTAI TIMUR wanita  1097
+## 233       7408               KOLAKA UTARA   pria  3692
+## 234       7408               KOLAKA UTARA wanita  1468
+## 235       7505            GORONTALO UTARA   pria  1485
+## 236       7505            GORONTALO UTARA wanita  1610
+## 237       1802                  TANGGAMUS   pria  5773
+## 238       1802                  TANGGAMUS wanita  2510
+## 239       7372                   PAREPARE   pria     0
+## 240       7372                   PAREPARE wanita     0
+## 241       7102                   MINAHASA   pria   523
+## 242       7102                   MINAHASA wanita   798
+## 243       7604                     MAMUJU   pria  1476
+## 244       7604                     MAMUJU wanita     0
+## 245       3304               BANJARNEGARA   pria 10853
+## 246       3304               BANJARNEGARA wanita  5718
+## 247       1202           MANDAILING NATAL   pria  1757
+## 248       1202           MANDAILING NATAL wanita  2219
+## 249       9430                 LANNY JAYA   pria     0
+## 250       9430                 LANNY JAYA wanita     0
+## 251       3201                      BOGOR   pria 28927
+## 252       3201                      BOGOR wanita  8860
+## 253       1215         HUMBANG HASUNDUTAN   pria  1015
+## 254       1215         HUMBANG HASUNDUTAN wanita     0
+## 255       7313                       WAJO   pria   718
+## 256       7313                       WAJO wanita  2108
+## 257       1311                DHARMASRAYA   pria  2626
+## 258       1311                DHARMASRAYA wanita     0
+## 259       1209                 SIMALUNGUN   pria   881
+## 260       1209                 SIMALUNGUN wanita  1122
+## 261       1508                       TEBO   pria  5497
+## 262       1508                       TEBO wanita   857
+## 263       3518                    NGANJUK   pria  1962
+## 264       3518                    NGANJUK wanita  4892
+## 265       1506       TANJUNG JABUNG TIMUR   pria  2440
+## 266       1506       TANJUNG JABUNG TIMUR wanita     0
+## 267       1706                   MUKOMUKO   pria   445
+## 268       1706                   MUKOMUKO wanita   523
+## 269       3172              JAKARTA TIMUR   pria     0
+## 270       3172              JAKARTA TIMUR wanita  3004
+## 271       7302                  BULUKUMBA   pria  1608
+## 272       7302                  BULUKUMBA wanita   911
+## 273       7312                    SOPPENG   pria  2505
+## 274       7312                    SOPPENG wanita     0
+## 275       7504               BONE BOLANGO   pria  1888
+## 276       7504               BONE BOLANGO wanita   531
+## 277       3510                 BANYUWANGI   pria 10379
+## 278       3510                 BANYUWANGI wanita  9502
+## 279       3511                  BONDOWOSO   pria  7353
+## 280       3511                  BONDOWOSO wanita  1876
+## 281       3521                      NGAWI   pria  5341
+## 282       3521                      NGAWI wanita  8940
+## 283       3674          TANGERANG SELATAN   pria     0
+## 284       3674          TANGERANG SELATAN wanita  4980
+## 285       1801              LAMPUNG BARAT   pria  3843
+## 286       1801              LAMPUNG BARAT wanita  5217
+## 287       3603                  TANGERANG   pria 10979
+## 288       3603                  TANGERANG wanita  7347
+## 289       3310                     KLATEN   pria  3502
+## 290       3310                     KLATEN wanita  6526
+## 291       6101                     SAMBAS   pria     0
+## 292       6101                     SAMBAS wanita  1492
+## 293       1118                 PIDIE JAYA   pria   612
+## 294       1118                 PIDIE JAYA wanita   802
+## 295       3309                   BOYOLALI   pria  6627
+## 296       3309                   BOYOLALI wanita  4808
+## 297       3512                  SITUBONDO   pria  8117
+## 298       3512                  SITUBONDO wanita  4494
+## 299       1274              TEBING TINGGI   pria     0
+## 300       1274              TEBING TINGGI wanita     0
+## 301       1309                    PASAMAN   pria     0
+## 302       1309                    PASAMAN wanita  1757
+## 303       9411                PUNCAK JAYA   pria   358
+## 304       9411                PUNCAK JAYA wanita     0
+## 305       1501                    KERINCI   pria  2377
+## 306       1501                    KERINCI wanita     0
+## 307       3325                     BATANG   pria 11220
+## 308       3325                     BATANG wanita  8981
+## 309       2104                     LINGGA   pria     0
+## 310       2104                     LINGGA wanita     0
+## 311       3206                TASIKMALAYA   pria 10966
+## 312       3206                TASIKMALAYA wanita 10761
+## 313       6106                   KETAPANG   pria  5548
+## 314       6106                   KETAPANG wanita  3693
+## 315       1673                 PAGAR ALAM   pria  1686
+## 316       1673                 PAGAR ALAM wanita     0
+## 317       3277                     CIMAHI   pria  8573
+## 318       3277                     CIMAHI wanita  3331
+## 319       6403          KUTAI KARTANEGARA   pria  1609
+## 320       6403          KUTAI KARTANEGARA wanita     0
+## 321       1509                      BUNGO   pria     0
+## 322       1509                      BUNGO wanita     0
+## 323       7316                   ENREKANG   pria   718
+## 324       7316                   ENREKANG wanita  1480
+## 325       3210                 MAJALENGKA   pria 28692
+## 326       3210                 MAJALENGKA wanita  8299
+## 327       7104           KEPULAUAN TALAUD   pria   871
+## 328       7104           KEPULAUAN TALAUD wanita     0
+## 329       3101           KEPULAUAN SERIBU   pria  3425
+## 330       3101           KEPULAUAN SERIBU wanita     0
+## 331       3401                KULON PROGO   pria  1269
+## 332       3401                KULON PROGO wanita  1868
+## 333       1109                      PIDIE   pria   367
+## 334       1109                      PIDIE wanita     0
+## 335       8103              MALUKU TENGAH   pria   355
+## 336       8103              MALUKU TENGAH wanita   426
+## 337       3505                     BLITAR   pria  4202
+## 338       3505                     BLITAR wanita     0
+## 339       1102               ACEH SINGKIL   pria   577
+## 340       1102               ACEH SINGKIL wanita     0
+## 341       1206               TOBA SAMOSIR   pria     0
+## 342       1206               TOBA SAMOSIR wanita     0
+## 343       6110                     MELAWI   pria  1022
+## 344       6110                     MELAWI wanita   911
+## 345       1702              REJANG LEBONG   pria   549
+## 346       1702              REJANG LEBONG wanita   616
+## 347       9418                   TOLIKARA   pria     0
+## 348       9418                   TOLIKARA wanita     0
+## 349       1813              PESISIR BARAT   pria     0
+## 350       1813              PESISIR BARAT wanita     0
+## 351       3312                   WONOGIRI   pria  4621
+## 352       3312                   WONOGIRI wanita  6354
+## 353       3503                 TRENGGALEK   pria  2734
+## 354       3503                 TRENGGALEK wanita  6610
+## 355       8171                      AMBON   pria     0
+## 356       8171                      AMBON wanita     0
+## 357       1211                       KARO   pria  2505
+## 358       1211                       KARO wanita  5691
+## 359       5306                       BELU   pria   715
+## 360       5306                       BELU wanita     0
+## 361       1312              PASAMAN BARAT   pria  2919
+## 362       1312              PASAMAN BARAT wanita  2914
+## 363       3673                     SERANG   pria  2509
+## 364       3673                     SERANG wanita  6052
+## 365       1871             BANDAR LAMPUNG   pria  1689
+## 366       1871             BANDAR LAMPUNG wanita     0
+## 367       1671                  PALEMBANG   pria  4582
+## 368       1671                  PALEMBANG wanita  1108
+## 369       7315                    PINRANG   pria   843
+## 370       7315                    PINRANG wanita     0
+## 371       9471                   JAYAPURA   pria   439
+## 372       9471                   JAYAPURA wanita   415
+## 373       3311                  SUKOHARJO   pria  1615
+## 374       3311                  SUKOHARJO wanita     0
+## 375       7108     SIAU TAGULANDANG BIARO   pria  1916
+## 376       7108     SIAU TAGULANDANG BIARO wanita     0
+## 377       1473                  D U M A I   pria  4827
+## 378       1473                  D U M A I wanita  1293
+## 379       1408                  BENGKALIS   pria  1242
+## 380       1408                  BENGKALIS wanita  1219
+## 381       1117               BENER MERIAH   pria     0
+## 382       1117               BENER MERIAH wanita  2779
+## 383       7301          KEPULAUAN SELAYAR   pria     0
+## 384       7301          KEPULAUAN SELAYAR wanita  1026
+## 385       7602            POLEWALI MANDAR   pria     0
+## 386       7602            POLEWALI MANDAR wanita   699
+## 387       1108                 ACEH BESAR   pria   652
+## 388       1108                 ACEH BESAR wanita   431
+## 389       5310                      SIKKA   pria  2295
+## 390       5310                      SIKKA wanita   610
+## 391       5304       TIMOR TENGAH SELATAN   pria  2244
+## 392       5304       TIMOR TENGAH SELATAN wanita  1345
+## 393       6202         KOTAWARINGIN TIMUR   pria  1178
+## 394       6202         KOTAWARINGIN TIMUR wanita   410
+## 395       7571                  GORONTALO   pria   699
+## 396       7571                  GORONTALO wanita     0
+## 397       7304                  JENEPONTO   pria  1678
+## 398       7304                  JENEPONTO wanita     0
+## 399       1602         OGAN KOMERING ILIR   pria  1263
+## 400       1602         OGAN KOMERING ILIR wanita  4894
+## 401       1222       LABUHAN BATU SELATAN   pria  2918
+## 402       1222       LABUHAN BATU SELATAN wanita     0
+## 403       1805             LAMPUNG TENGAH   pria 11223
+## 404       1805             LAMPUNG TENGAH wanita  1392
+## 405       7409                BUTON UTARA   pria  1293
+## 406       7409                BUTON UTARA wanita   601
+## 407       3527                    SAMPANG   pria  2293
+## 408       3527                    SAMPANG wanita     0
+## 409       3216                     BEKASI   pria  6231
+## 410       3216                     BEKASI wanita  3901
+## 411       1310              SOLOK SELATAN   pria  1287
+## 412       1310              SOLOK SELATAN wanita   778
+## 413       3321                      DEMAK   pria 11305
+## 414       3321                      DEMAK wanita  3908
+## 415       3208                   KUNINGAN   pria 10392
+## 416       3208                   KUNINGAN wanita  3901
+## 417       1173                     LANGSA   pria   445
+## 418       1173                     LANGSA wanita   745
+## 419       3279                     BANJAR   pria  5075
+## 420       3279                     BANJAR wanita     0
+## 421       5319            MANGGARAI TIMUR   pria  6022
+## 422       5319            MANGGARAI TIMUR wanita  2220
+## 423       1104              ACEH TENGGARA   pria     0
+## 424       1104              ACEH TENGGARA wanita  1717
+## 425       1613           MUSI RAWAS UTARA   pria     0
+## 426       1613           MUSI RAWAS UTARA wanita     0
+## 427       1103               ACEH SELATAN   pria   622
+## 428       1103               ACEH SELATAN wanita   772
+## 429       6401                      PASER   pria  2042
+## 430       6401                      PASER wanita  1119
+## 431       3573                     MALANG   pria     0
+## 432       3573                     MALANG wanita     0
+## 433       7325                 LUWU TIMUR   pria  1658
+## 434       7325                 LUWU TIMUR wanita   850
+## 435       3303                PURBALINGGA   pria  6496
+## 436       3303                PURBALINGGA wanita  9003
+## 437       6471                 BALIKPAPAN   pria  2108
+## 438       6471                 BALIKPAPAN wanita  2029
+## 439       1409                ROKAN HILIR   pria  6319
+## 440       1409                ROKAN HILIR wanita  1138
+## 441       7407                   WAKATOBI   pria   475
+## 442       7407                   WAKATOBI wanita     0
+## 443       7172                     BITUNG   pria     0
+## 444       7172                     BITUNG wanita     0
+## 445       8107         SERAM BAGIAN TIMUR   pria  1330
+## 446       8107         SERAM BAGIAN TIMUR wanita   388
+## 447       7208             PARIGI MOUTONG   pria  1369
+## 448       7208             PARIGI MOUTONG wanita   581
+## 449       3523                      TUBAN   pria 22265
+## 450       3523                      TUBAN wanita  3923
+## 451       5303                     KUPANG   pria  1141
+## 452       5303                     KUPANG wanita  1345
+## 453       6405                      BERAU   pria  2458
+## 454       6405                      BERAU wanita     0
+## 455       7503                   POHUWATO   pria  2062
+## 456       7503                   POHUWATO wanita   715
+## 457       1601          OGAN KOMERING ULU   pria     0
+## 458       1601          OGAN KOMERING ULU wanita     0
+## 459       3373                   SALATIGA   pria  1602
+## 460       3373                   SALATIGA wanita     0
+## 461       3571                     KEDIRI   pria     0
+## 462       3571                     KEDIRI wanita  1878
+## 463       5107                KARANG ASEM   pria  1811
+## 464       5107                KARANG ASEM wanita  5442
+## 465       3217              BANDUNG BARAT   pria 13010
+## 466       3217              BANDUNG BARAT wanita     0
+## 467       6303                     BANJAR   pria  2525
+## 468       6303                     BANJAR wanita  1798
+## 469       2102                     BINTAN   pria  1147
+## 470       2102                     BINTAN wanita     0
+## 471       7271                       PALU   pria     0
+## 472       7271                       PALU wanita  1256
+## 473       5201               LOMBOK BARAT   pria  2258
+## 474       5201               LOMBOK BARAT wanita  2254
+## 475       1372                      SOLOK   pria     0
+## 476       1372                      SOLOK wanita     0
+## 477       3404                     SLEMAN   pria  1669
+## 478       3404                     SLEMAN wanita     0
+## 479       3271                      BOGOR   pria  5166
+## 480       3271                      BOGOR wanita     0
+## 481       2101                    KARIMUN   pria   410
+## 482       2101                    KARIMUN wanita     0
+## 483       7209               TOJO UNA-UNA   pria  2586
+## 484       7209               TOJO UNA-UNA wanita  1516
+## 485       7173                    TOMOHON   pria     0
+## 486       7173                    TOMOHON wanita   516
+## 487       3672                    CILEGON   pria  4824
+## 488       3672                    CILEGON wanita  2467
+## 489       1208                     ASAHAN   pria  6075
+## 490       1208                     ASAHAN wanita   963
+## 491       3301                    CILACAP   pria  6973
+## 492       3301                    CILACAP wanita  4328
+## 493       5208               LOMBOK UTARA   pria  3520
+## 494       5208               LOMBOK UTARA wanita     0
+## 495       3504                TULUNGAGUNG   pria 11194
+## 496       3504                TULUNGAGUNG wanita  5444
+## 497       6208                    SERUYAN   pria  4558
+## 498       6208                    SERUYAN wanita  1194
+## 499       3203                    CIANJUR   pria 24671
+## 500       3203                    CIANJUR wanita 13765
+## 501       5301                SUMBA BARAT   pria  1062
+## 502       5301                SUMBA BARAT wanita     0
+## 503       7308                      MAROS   pria   971
+## 504       7308                      MAROS wanita  1635
+## 505       3579                       BATU   pria 11089
+## 506       3579                       BATU wanita  7165
+## 507       3322                   SEMARANG   pria  4509
+## 508       3322                   SEMARANG wanita  9542
+## 509       7111    BOLAANG MONGONDOW TIMUR   pria   531
+## 510       7111    BOLAANG MONGONDOW TIMUR wanita     0
+## 511       9417         PEGUNUNGAN BINTANG   pria     0
+## 512       9417         PEGUNUNGAN BINTANG wanita   395
+## 513       1605                 MUSI RAWAS   pria  1279
+## 514       1605                 MUSI RAWAS wanita  4488
+## 515       6103                     LANDAK   pria   735
+## 516       6103                     LANDAK wanita  2631
+## 517       6309                   TABALONG   pria   954
+## 518       6309                   TABALONG wanita     0
+## 519       8104                       BURU   pria  1777
+## 520       8104                       BURU wanita     0
+## 521       6308          HULU SUNGAI UTARA   pria     0
+## 522       6308          HULU SUNGAI UTARA wanita     0
+## 523       1111                 ACEH UTARA   pria     0
+## 524       1111                 ACEH UTARA wanita     0
+## 525       1302            PESISIR SELATAN   pria  2655
+## 526       1302            PESISIR SELATAN wanita     0
+## 527       1672                 PRABUMULIH   pria  2618
+## 528       1672                 PRABUMULIH wanita  1009
+## 529       9171                     SORONG   pria   344
+## 530       9171                     SORONG wanita     0
+## 531       1375                BUKITTINGGI   pria     0
+## 532       1375                BUKITTINGGI wanita     0
+## 533       5311                       ENDE   pria  1898
+## 534       5311                       ENDE wanita  2673
+## 535       1377                   PARIAMAN   pria     0
+## 536       1377                   PARIAMAN wanita     0
+## 537       3514                   PASURUAN   pria  5429
+## 538       3514                   PASURUAN wanita     0
+## 539       7371                   MAKASSAR   pria   820
+## 540       7371                   MAKASSAR wanita  2108
+## 541       7606              MAMUJU TENGAH   pria  1880
+## 542       7606              MAMUJU TENGAH wanita     0
+## 543       7109          MINAHASA TENGGARA   pria   968
+## 544       7109          MINAHASA TENGGARA wanita     0
+## 545       9434                    DOGIYAI   pria     0
+## 546       9434                    DOGIYAI wanita     0
+## 547       3313                KARANGANYAR   pria  7756
+## 548       3313                KARANGANYAR wanita  9812
+## 549       1112            ACEH BARAT DAYA   pria     0
+## 550       1112            ACEH BARAT DAYA wanita     0
+## 551       7206                  TOLI-TOLI   pria  1217
+## 552       7206                  TOLI-TOLI wanita  1387
+## 553       1308            LIMA PULUH KOTA   pria     0
+## 554       1308            LIMA PULUH KOTA wanita  1778
+## 555       1201                       NIAS   pria  2319
+## 556       1201                       NIAS wanita  1735
+## 557       1902                   BELITUNG   pria  1320
+## 558       1902                   BELITUNG wanita  1231
+## 559       9408            KEPULAUAN YAPEN   pria     0
+## 560       9408            KEPULAUAN YAPEN wanita   651
+## 561       1604                      LAHAT   pria  1636
+## 562       1604                      LAHAT wanita     0
+## 563       3574                PROBOLINGGO   pria  1826
+## 564       3574                PROBOLINGGO wanita  2100
+## 565       3319                      KUDUS   pria  7476
+## 566       3319                      KUDUS wanita  4377
+## 567       1307                       AGAM   pria     0
+## 568       1307                       AGAM wanita  1470
+## 569       3209                    CIREBON   pria 15328
+## 570       3209                    CIREBON wanita  3331
+## 571       1705                     SELUMA   pria  1815
+## 572       1705                     SELUMA wanita     0
+## 573       3508                   LUMAJANG   pria  7481
+## 574       3508                   LUMAJANG wanita  2445
+## 575       6205               BARITO UTARA   pria   564
+## 576       6205               BARITO UTARA wanita   541
+## 577       5204                    SUMBAWA   pria  2193
+## 578       5204                    SUMBAWA wanita     0
+## 579       9104              TELUK BINTUNI   pria     0
+## 580       9104              TELUK BINTUNI wanita     0
+## 581       1504                BATANG HARI   pria  2498
+## 582       1504                BATANG HARI wanita  1429
+## 583       7318                TANA TORAJA   pria   816
+## 584       7318                TANA TORAJA wanita     0
+## 585       1704                       KAUR   pria   922
+## 586       1704                       KAUR wanita     0
+## 587       3329                     BREBES   pria 10616
+## 588       3329                     BREBES wanita     0
+## 589       1373                SAWAH LUNTO   pria  1251
+## 590       1373                SAWAH LUNTO wanita     0
+## 591       1808               TULANGBAWANG   pria  3696
+## 592       1808               TULANGBAWANG wanita     0
+## 593       3516                  MOJOKERTO   pria  2870
+## 594       3516                  MOJOKERTO wanita     0
+## 595       3272                   SUKABUMI   pria 10332
+## 596       3272                   SUKABUMI wanita     0
+## 597       1224                 NIAS UTARA   pria  2306
+## 598       1224                 NIAS UTARA wanita  1965
+## 599       1101                   SIMEULUE   pria  1656
+## 600       1101                   SIMEULUE wanita     0
+## 601       6212               BARITO TIMUR   pria  1228
+## 602       6212               BARITO TIMUR wanita     0
+## 603       5207              SUMBAWA BARAT   pria  1330
+## 604       5207              SUMBAWA BARAT wanita  2469
+## 605       5205                      DOMPU   pria  1291
+## 606       5205                      DOMPU wanita  1244
+## 607       3519                     MADIUN   pria  6875
+## 608       3519                     MADIUN wanita  2446
+## 609       1812        TULANG BAWANG BARAT   pria     0
+## 610       1812        TULANG BAWANG BARAT wanita     0
+## 611       6306        HULU SUNGAI SELATAN   pria  4166
+## 612       6306        HULU SUNGAI SELATAN wanita   554
+## 613       9436                     DEIYAI   pria     0
+## 614       9436                     DEIYAI wanita   375
+## 615       1810                  PRINGSEWU   pria  4956
+## 616       1810                  PRINGSEWU wanita  1393
+## 617       7411               KOLAKA TIMUR   pria   729
+## 618       7411               KOLAKA TIMUR wanita   612
+## 619       3374                   SEMARANG   pria  1720
+## 620       3374                   SEMARANG wanita  3403
+## 621       3402                     BANTUL   pria  3823
+## 622       3402                     BANTUL wanita     0
+## 623       3522                 BOJONEGORO   pria  6604
+## 624       3522                 BOJONEGORO wanita  7359
+## 625       5102                    TABANAN   pria     0
+## 626       5102                    TABANAN wanita  2094
+## 627       3376                      TEGAL   pria  1794
+## 628       3376                      TEGAL wanita     0
+## 629       7307                     SINJAI   pria  2506
+## 630       7307                     SINJAI wanita   850
+## 631       3314                     SRAGEN   pria     0
+## 632       3314                     SRAGEN wanita     0
+## 633       7373                     PALOPO   pria  2074
+## 634       7373                     PALOPO wanita   911
+## 635       9402                 JAYAWIJAYA   pria  1251
+## 636       9402                 JAYAWIJAYA wanita     0
+## 637       3328                      TEGAL   pria 12022
+## 638       3328                      TEGAL wanita  3190
+## 639       9415                      ASMAT   pria   380
+## 640       9415                      ASMAT wanita  1943
+## 641       1804              LAMPUNG TIMUR   pria  4062
+## 642       1804              LAMPUNG TIMUR wanita  2738
+## 643       1403            INDRAGIRI HILIR   pria  1219
+## 644       1403            INDRAGIRI HILIR wanita  2438
+## 645       8102            MALUKU TENGGARA   pria   495
+## 646       8102            MALUKU TENGGARA wanita   388
+## 647       7322                 LUWU UTARA   pria     0
+## 648       7322                 LUWU UTARA wanita   784
+## 649       1376                 PAYAKUMBUH   pria  1666
+## 650       1376                 PAYAKUMBUH wanita     0
+## 651       9416                   YAHUKIMO   pria   420
+## 652       9416                   YAHUKIMO wanita     0
+## 653       5318                    NAGEKEO   pria     0
+## 654       5318                    NAGEKEO wanita   671
+## 655       5203               LOMBOK TIMUR   pria  3047
+## 656       5203               LOMBOK TIMUR wanita  1264
+## 657       1703             BENGKULU UTARA   pria     0
+## 658       1703             BENGKULU UTARA wanita     0
+## 659       3528                  PAMEKASAN   pria  4647
+## 660       3528                  PAMEKASAN wanita 11158
+## 661       7404                     KOLAKA   pria   625
+## 662       7404                     KOLAKA wanita     0
+## 663       3215                   KARAWANG   pria 13514
+## 664       3215                   KARAWANG wanita  3123
+## 665       5312                      NGADA   pria  1430
+## 666       5312                      NGADA wanita  1315
+## 667       1218            SERDANG BEDAGAI   pria  4022
+## 668       1218            SERDANG BEDAGAI wanita     0
+## 669       7211               BANGGAI LAUT   pria   721
+## 670       7211               BANGGAI LAUT wanita     0
+## 671       7207                       BUOL   pria   754
+## 672       7207                       BUOL wanita   674
+## 673       3305                    KEBUMEN   pria  8626
+## 674       3305                    KEBUMEN wanita  2101
+## 675       9427                    SUPIORI   pria     0
+## 676       9427                    SUPIORI wanita     0
+## 677       1806              LAMPUNG UTARA   pria  6534
+## 678       1806              LAMPUNG UTARA wanita  2468
+## 679       6502                   BULUNGAN   pria   847
+## 680       6502                   BULUNGAN wanita     0
+## 681       1212               DELI SERDANG   pria  3446
+## 682       1212               DELI SERDANG wanita  3751
+## 683       6402                KUTAI BARAT   pria  2784
+## 684       6402                KUTAI BARAT wanita  2190
+## 685       3602                      LEBAK   pria 22657
+## 686       3602                      LEBAK wanita  6004
+## 687       3307                   WONOSOBO   pria 11620
+## 688       3307                   WONOSOBO wanita  8805
+## 689       3509                     JEMBER   pria 13037
+## 690       3509                     JEMBER wanita  4288
+## 691       8206            HALMAHERA TIMUR   pria  1835
+## 692       8206            HALMAHERA TIMUR wanita   567
+## 693       7203                   MOROWALI   pria   754
+## 694       7203                   MOROWALI wanita     0
+## 695       1220         PADANG LAWAS UTARA   pria     0
+## 696       1220         PADANG LAWAS UTARA wanita     0
+## 697       1276                     BINJAI   pria  1220
+## 698       1276                     BINJAI wanita  1122
+## 699       1872                      METRO   pria     0
+## 700       1872                      METRO wanita  2169
+## 701       7471                    KENDARI   pria     0
+## 702       7471                    KENDARI wanita     0
+## 703       8106         SERAM BAGIAN BARAT   pria     0
+## 704       8106         SERAM BAGIAN BARAT wanita     0
+## 705       1275                      MEDAN   pria  3655
+## 706       1275                      MEDAN wanita     0
+## 707       1402             INDRAGIRI HULU   pria  7263
+## 708       1402             INDRAGIRI HULU wanita     0
+## 709       1708                  KEPAHIANG   pria   712
+## 710       1708                  KEPAHIANG wanita     0
+## 711       1807                  WAY KANAN   pria  1831
+## 712       1807                  WAY KANAN wanita  1507
+## 713       5103                     BADUNG   pria     0
+## 714       5103                     BADUNG wanita     0
+## 715       6172                 SINGKAWANG   pria  1514
+## 716       6172                 SINGKAWANG wanita     0
+## 717       3175              JAKARTA UTARA   pria  2633
+## 718       3175              JAKARTA UTARA wanita     0
+## 719       1172                     SABANG   pria     0
+## 720       1172                     SABANG wanita   470
+## 721       5171                   DENPASAR   pria  1252
+## 722       5171                   DENPASAR wanita  2619
+## 723       1505                MUARO JAMBI   pria  2204
+## 724       1505                MUARO JAMBI wanita   857
+## 725       8271                    TERNATE   pria   497
+## 726       8271                    TERNATE wanita     0
+## 727       9426                    WAROPEN   pria     0
+## 728       9426                    WAROPEN wanita     0
+## 729       9107                     SORONG   pria   774
+## 730       9107                     SORONG wanita   218
+## 731       8207              PULAU MOROTAI   pria   733
+## 732       8207              PULAU MOROTAI wanita   944
+## 733       7107    BOLAANG MONGONDOW UTARA   pria  1199
+## 734       7107    BOLAANG MONGONDOW UTARA wanita     0
+## 735       7402                       MUNA   pria     0
+## 736       7402                       MUNA wanita     0
+## 737       7326               TORAJA UTARA   pria   816
+## 738       7326               TORAJA UTARA wanita     0
+## 739       3513                PROBOLINGGO   pria 12124
+## 740       3513                PROBOLINGGO wanita  6940
+## 741       3515                   SIDOARJO   pria  4068
+## 742       3515                   SIDOARJO wanita  3872
+## 743       7406                    BOMBANA   pria  1354
+## 744       7406                    BOMBANA wanita     0
+## 745       8105              KEPULAUAN ARU   pria   416
+## 746       8105              KEPULAUAN ARU wanita   472
+## 747       5202              LOMBOK TENGAH   pria     0
+## 748       5202              LOMBOK TENGAH wanita  7762
+## 749       3326                 PEKALONGAN   pria 14194
+## 750       3326                 PEKALONGAN wanita  6381
+## 751       1171                 BANDA ACEH   pria     0
+## 752       1171                 BANDA ACEH wanita     0
+## 753       6104                  PONTIANAK   pria  3213
+## 754       6104                  PONTIANAK wanita  1811
+## 755       1105                 ACEH TIMUR   pria  1466
+## 756       1105                 ACEH TIMUR wanita   611
+## 757       9102                    KAIMANA   pria     0
+## 758       9102                    KAIMANA wanita   350
+## 759       9403                   JAYAPURA   pria  1220
+## 760       9403                   JAYAPURA wanita     0
+## 761       3218                PANGANDARAN   pria  5925
+## 762       3218                PANGANDARAN wanita     0
+## 763       9432                     YALIMO   pria  1292
+## 764       9432                     YALIMO wanita     0
+## 765       3577                     MADIUN   pria  2077
+## 766       3577                     MADIUN wanita     0
+## 767       7305                    TAKALAR   pria     0
+## 768       7305                    TAKALAR wanita  1550
+## 769       3403               GUNUNG KIDUL   pria  6887
+## 770       3403               GUNUNG KIDUL wanita  1674
+## 771       6107                    SINTANG   pria     0
+## 772       6107                    SINTANG wanita     0
+## 773       3320                     JEPARA   pria  5365
+## 774       3320                     JEPARA wanita     0
+## 775       1272              TANJUNG BALAI   pria  2763
+## 776       1272              TANJUNG BALAI wanita  1112
+## 777       8172                       TUAL   pria     0
+## 778       8172                       TUAL wanita   417
+## 779       3173              JAKARTA PUSAT   pria  2633
+## 780       3173              JAKARTA PUSAT wanita  6981
+## 781       6203                     KAPUAS   pria  2916
+## 782       6203                     KAPUAS wanita  1664
+## 783       1771                   BENGKULU   pria  1607
+## 784       1771                   BENGKULU wanita   696
+## 785       8272           TIDORE KEPULAUAN   pria     0
+## 786       8272           TIDORE KEPULAUAN wanita     0
+## 787       1203           TAPANULI SELATAN   pria  2232
+## 788       1203           TAPANULI SELATAN wanita  1654
+## 789       6307         HULU SUNGAI TENGAH   pria  2510
+## 790       6307         HULU SUNGAI TENGAH wanita  1877
+## 791       7110  BOLAANG MONGONDOW SELATAN   pria   403
+## 792       7110  BOLAANG MONGONDOW SELATAN wanita     0
+## 793       7171                     MANADO   pria  2888
+## 794       7171                     MANADO wanita   798
+## 795       7601                     MAJENE   pria  2364
+## 796       7601                     MAJENE wanita   294
+## 797       3276                      DEPOK   pria  3138
+## 798       3276                      DEPOK wanita     0
+## 799       2105          KEPULAUAN ANAMBAS   pria     0
+## 800       2105          KEPULAUAN ANAMBAS wanita     0
+## 801       9410                     PANIAI   pria   554
+## 802       9410                     PANIAI wanita   512
+## 803       5105                  KLUNGKUNG   pria  3510
+## 804       5105                  KLUNGKUNG wanita     0
+## 805       1205             TAPANULI UTARA   pria   892
+## 806       1205             TAPANULI UTARA wanita   963
+## 807       3526                  BANGKALAN   pria 19445
+## 808       3526                  BANGKALAN wanita  7957
+## 809       6210               PULANG PISAU   pria  3167
+## 810       6210               PULANG PISAU wanita  1038
+## 811       1410          KEPULAUAN MERANTI   pria  3891
+## 812       1410          KEPULAUAN MERANTI wanita     0
+## 813       9433                     PUNCAK   pria     0
+## 814       9433                     PUNCAK wanita     0
+## 815       1811                     MESUJI   pria  7726
+## 816       1811                     MESUJI wanita  3141
+## 817       6472                  SAMARINDA   pria  2987
+## 818       6472                  SAMARINDA wanita  1977
+## 819       1903               BANGKA BARAT   pria  1239
+## 820       1903               BANGKA BARAT wanita     0
+## 821       8101      MALUKU TENGGARA BARAT   pria  1231
+## 822       8101      MALUKU TENGGARA BARAT wanita   414
+## 823       6474                    BONTANG   pria   783
+## 824       6474                    BONTANG wanita  1097
+## 825       8204          HALMAHERA SELATAN   pria   609
+## 826       8204          HALMAHERA SELATAN wanita  1107
+## 827       3506                     KEDIRI   pria 11732
+## 828       3506                     KEDIRI wanita  6650
+## 829       7317                       LUWU   pria     0
+## 830       7317                       LUWU wanita     0
+## 831       7105           MINAHASA SELATAN   pria   368
+## 832       7105           MINAHASA SELATAN wanita   854
+## 833       1277            PADANGSIDIMPUAN   pria     0
+## 834       1277            PADANGSIDIMPUAN wanita     0
+## 835       5101                   JEMBRANA   pria   791
+## 836       5101                   JEMBRANA wanita  4571
+## 837       3671                  TANGERANG   pria  6062
+## 838       3671                  TANGERANG wanita     0
+## 839       3308                   MAGELANG   pria  4796
+## 840       3308                   MAGELANG wanita  6440
+## 841       3529                    SUMENEP   pria  4102
+## 842       3529                    SUMENEP wanita  8898
+## 843       9409                BIAK NUMFOR   pria     0
+## 844       9409                BIAK NUMFOR wanita     0
+## 845       9404                     NABIRE   pria     0
+## 846       9404                     NABIRE wanita     0
+## 847       3306                  PURWOREJO   pria  4307
+## 848       3306                  PURWOREJO wanita  2343
+## 849       1306            PADANG PARIAMAN   pria     0
+## 850       1306            PADANG PARIAMAN wanita     0
+## 851       7303                   BANTAENG   pria  3056
+## 852       7303                   BANTAENG wanita     0
+## 853       1406                     KAMPAR   pria  3371
+## 854       1406                     KAMPAR wanita  1409
+## 855       3471                 YOGYAKARTA   pria  1986
+## 856       3471                 YOGYAKARTA wanita     0
+## 857       5271                    MATARAM   pria     0
+## 858       5271                    MATARAM wanita  2806
+## 859       1606             MUSI BANYUASIN   pria  3347
+## 860       1606             MUSI BANYUASIN wanita     0
+## 861       3375                 PEKALONGAN   pria  2683
+## 862       3375                 PEKALONGAN wanita     0
+## 863       9401                    MERAUKE   pria   915
+## 864       9401                    MERAUKE wanita     0
+## 865       1303                      SOLOK   pria     0
+## 866       1303                      SOLOK wanita   677
+## 867       6271              PALANGKA RAYA   pria  1172
+## 868       6271              PALANGKA RAYA wanita     0
+## 869       6304               BARITO KUALA   pria     0
+## 870       6304               BARITO KUALA wanita  2018
+## 871       8205            HALMAHERA UTARA   pria  1155
+## 872       8205            HALMAHERA UTARA wanita     0
+## 873       7201          BANGGAI KEPULAUAN   pria   857
+## 874       7201          BANGGAI KEPULAUAN wanita     0
+## 875       6111               KAYONG UTARA   pria   906
+## 876       6111               KAYONG UTARA wanita     0
+## 877       3278                TASIKMALAYA   pria     0
+## 878       3278                TASIKMALAYA wanita  9867
+## 879       8108          MALUKU BARAT DAYA   pria   399
+## 880       8108          MALUKU BARAT DAYA wanita     0
+## 881       3204                    BANDUNG   pria 35637
+## 882       3204                    BANDUNG wanita     0
+## 883       3214                 PURWAKARTA   pria  5427
+## 884       3214                 PURWAKARTA wanita     0
+## 885       6409        PENAJAM PASER UTARA   pria  1832
+## 886       6409        PENAJAM PASER UTARA wanita     0
+## 887       1610                  OGAN ILIR   pria  8647
+## 888       1610                  OGAN ILIR wanita  1412
+## 889       7605               MAMUJU UTARA   pria   964
+## 890       7605               MAMUJU UTARA wanita   698
+## 891       5314                  ROTE NDAO   pria  1668
+## 892       5314                  ROTE NDAO wanita  1290
+## 893       7310                      BARRU   pria  3711
+## 894       7310                      BARRU wanita   957
+## 895       3502                   PONOROGO   pria 13500
+## 896       3502                   PONOROGO wanita     0
+## 897       1404                  PELALAWAN   pria  3800
+## 898       1404                  PELALAWAN wanita     0
+## 899       1611               EMPAT LAWANG   pria     0
+## 900       1611               EMPAT LAWANG wanita     0
+## 901       1904              BANGKA TENGAH   pria   725
+## 902       1904              BANGKA TENGAH wanita   813
+## 903       6109                    SEKADAU   pria  2596
+## 904       6109                    SEKADAU wanita   820
+## 905       8208              PULAU TALIABU   pria   454
+## 906       8208              PULAU TALIABU wanita     0
+## 907       1113                  GAYO LUES   pria     0
+## 908       1113                  GAYO LUES wanita     0
+## 909       1572               SUNGAI PENUH   pria     0
+## 910       1572               SUNGAI PENUH wanita     0
+## 911       5308                    LEMBATA   pria   566
+## 912       5308                    LEMBATA wanita   399
+## 913       1401           KUANTAN SINGINGI   pria  2462
+## 914       1401           KUANTAN SINGINGI wanita  1293
+## 915       1901                     BANGKA   pria     0
+## 916       1901                     BANGKA wanita   643
+## 917       1107                 ACEH BARAT   pria     0
+## 918       1107                 ACEH BARAT wanita     0
+## 919       7210                       SIGI   pria   595
+## 920       7210                       SIGI wanita     0
+## 921       7174                 KOTAMOBAGU   pria     0
+## 922       7174                 KOTAMOBAGU wanita   905
+## 923       9109                   TAMBRAUW   pria   324
+## 924       9109                   TAMBRAUW wanita     0
+## 925       1225                 NIAS BARAT   pria  1907
+## 926       1225                 NIAS BARAT wanita     0
+## 927       6206                   SUKAMARA   pria     0
+## 928       6206                   SUKAMARA wanita     0
+## 929       6204             BARITO SELATAN   pria  2341
+## 930       6204             BARITO SELATAN wanita     0
+## 931       1906             BELITUNG TIMUR   pria  1870
+## 932       1906             BELITUNG TIMUR wanita     0
+## 933       9106             SORONG SELATAN   pria  1266
+## 934       9106             SORONG SELATAN wanita     0
+## 935       1301         KEPULAUAN MENTAWAI   pria   745
+## 936       1301         KEPULAUAN MENTAWAI wanita   781
+## 937       3274                    CIREBON   pria     0
+## 938       3274                    CIREBON wanita  3123
+## 939       6211                 GUNUNG MAS   pria     0
+## 940       6211                 GUNUNG MAS wanita     0
+## 941       1407                 ROKAN HULU   pria  2958
+## 942       1407                 ROKAN HULU wanita   952
+## 943       5272                       BIMA   pria  1050
+## 944       5272                       BIMA wanita     0
+## 945       5320                SABU RAIJUA   pria  1335
+## 946       5320                SABU RAIJUA wanita     0
+## 947       1502                   MERANGIN   pria  5312
+## 948       1502                   MERANGIN wanita     0
+## 949       5206                       BIMA   pria  2485
+## 950       5206                       BIMA wanita  1013
+## 951       1507       TANJUNG JABUNG BARAT   pria  4062
+## 952       1507       TANJUNG JABUNG BARAT wanita     0
+## 953       9105                  MANOKWARI   pria     0
+## 954       9105                  MANOKWARI wanita     0
+## 955       8202           HALMAHERA TENGAH   pria     0
+## 956       8202           HALMAHERA TENGAH wanita     0
+## 957       5305         TIMOR TENGAH UTARA   pria     0
+## 958       5305         TIMOR TENGAH UTARA wanita  2256
+## 959       1612 PENUKAL ABAB LEMATANG ILIR   pria  1456
+## 960       1612 PENUKAL ABAB LEMATANG ILIR wanita  1716
+## 961       1674               LUBUKLINGGAU   pria  1544
+## 962       1674               LUBUKLINGGAU wanita     0
+## 963       1110                    BIREUEN   pria     0
+## 964       1110                    BIREUEN wanita     0
+## 965       7405             KONAWE SELATAN   pria  3250
+## 966       7405             KONAWE SELATAN wanita     0
+## 967       7212             MOROWALI UTARA   pria     0
+## 968       7212             MOROWALI UTARA wanita  1439
+## 969       9110                    MAYBRAT   pria     0
+## 970       9110                    MAYBRAT wanita     0
+## 971       3575                   PASURUAN   pria  1972
+## 972       3575                   PASURUAN wanita     0
+## 973       7101          BOLAANG MONGONDOW   pria     0
+## 974       7101          BOLAANG MONGONDOW wanita   360
+## 975       9435                 INTAN JAYA   pria     0
+## 976       9435                 INTAN JAYA wanita     0
+## 977       3371                   MAGELANG   pria     0
+## 978       3371                   MAGELANG wanita     0
+## 979       9412                     MIMIKA   pria   542
+## 980       9412                     MIMIKA wanita   349
+## 981       1115                 NAGAN RAYA   pria     0
+## 982       1115                 NAGAN RAYA wanita     0
+## 983       9112           PEGUNUNGAN ARFAK   pria     0
+## 984       9112           PEGUNUNGAN ARFAK wanita     0
+## 985       6571                    TARAKAN   pria     0
+## 986       6571                    TARAKAN wanita   270
+## 987       6301                 TANAH LAUT   pria   890
+## 988       6301                 TANAH LAUT wanita     0
+## 989       9108                 RAJA AMPAT   pria     0
+## 990       9108                 RAJA AMPAT wanita     0
+## 991       3316                      BLORA   pria     0
+## 992       3316                      BLORA wanita     0
+## 993       1116                  ACEH JAYA   pria     0
+## 994       1116                  ACEH JAYA wanita     0
+## 995       9111          MANOKWARI SELATAN   pria     0
+## 996       9111          MANOKWARI SELATAN wanita     0
+## 997       7204                       POSO   pria     0
+## 998       7204                       POSO wanita  1529
+## 999       1608  OGAN KOMERING ULU SELATAN   pria  2626
+## 1000      1608  OGAN KOMERING ULU SELATAN wanita  1289
+## 1001      9413               BOVEN DIGOEL   pria   998
+## 1002      9413               BOVEN DIGOEL wanita     0
+## 1003      1709            BENGKULU TENGAH   pria  1617
+## 1004      1709            BENGKULU TENGAH wanita   629
+## 1005      1216              PAKPAK BHARAT   pria     0
+## 1006      1216              PAKPAK BHARAT wanita     0
+## 1007      6501                    MALINAU   pria   506
+## 1008      6501                    MALINAU wanita   240
+## 1009      2103                     NATUNA   pria   124
+## 1010      2103                     NATUNA wanita     0
+## 1011      1503                 SAROLANGUN   pria  3322
+## 1012      1503                 SAROLANGUN wanita     0
+## 1013      9429                      NDUGA   pria     0
+## 1014      9429                      NDUGA wanita   365
+## 1015      9103              TELUK WONDAMA   pria     0
+## 1016      9103              TELUK WONDAMA wanita     0
+## 1017      6311                   BALANGAN   pria   890
+## 1018      6311                   BALANGAN wanita  1989
+## 1019      6411               MAHAKAM HULU   pria     0
+## 1020      6411               MAHAKAM HULU wanita     0
+## 1021      7412           KONAWE KEPULAUAN   pria     0
+## 1022      7412           KONAWE KEPULAUAN wanita     0
 ```
 
 ---
@@ -1425,26 +2760,25 @@ background-size: cover
 
 ```r
 lulusan_sd_wider &lt;- lulusan_sd_joined %&gt;%
-  pivot_wider( names_from = "jk", values_from = "jumlah") %&gt;%
-  select(-`NA`)
+  pivot_wider( names_from = "jk", values_from = "Freq")
 
 lulusan_sd_wider
 ```
 
 ```
 ## # A tibble: 511 × 4
-##    KODE_KABB NAMA_KAB          wanita  pria
-##    &lt;fct&gt;     &lt;fct&gt;              &lt;int&gt; &lt;int&gt;
-##  1 3520      MAGETAN             4481    NA
-##  2 3517      JOMBANG               NA 10227
-##  3 1571      JAMBI                 NA  1368
-##  4 6171      PONTIANAK             NA    NA
-##  5 5108      BULELENG            2388   894
-##  6 1273      PEMATANG SIANTAR    1122  1064
-##  7 1204      TAPANULI TENGAH      827    NA
-##  8 3327      PEMALANG            6745 12290
-##  9 7314      SIDENRENG RAPPANG   2152   863
-## 10 1971      PANGKAL PINANG       534   514
+##    KODE_KABB NAMA_KAB           pria wanita
+##    &lt;fct&gt;     &lt;fct&gt;             &lt;dbl&gt;  &lt;dbl&gt;
+##  1 3520      MAGETAN               0   4481
+##  2 3517      JOMBANG           10227      0
+##  3 1571      JAMBI              1368      0
+##  4 6171      PONTIANAK             0      0
+##  5 5108      BULELENG            894   2388
+##  6 1273      PEMATANG SIANTAR   1064   1122
+##  7 1204      TAPANULI TENGAH       0    827
+##  8 3327      PEMALANG          12290   6745
+##  9 7314      SIDENRENG RAPPANG   863   2152
+## 10 1971      PANGKAL PINANG      514    534
 ## # … with 501 more rows
 ```
 
@@ -1462,17 +2796,17 @@ lulusan_sd_longer
 ```
 ## # A tibble: 1,022 × 4
 ##    KODE_KABB NAMA_KAB  jk     jumlah
-##    &lt;fct&gt;     &lt;fct&gt;     &lt;chr&gt;   &lt;int&gt;
-##  1 3520      MAGETAN   wanita   4481
-##  2 3520      MAGETAN   pria       NA
-##  3 3517      JOMBANG   wanita     NA
-##  4 3517      JOMBANG   pria    10227
-##  5 1571      JAMBI     wanita     NA
-##  6 1571      JAMBI     pria     1368
-##  7 6171      PONTIANAK wanita     NA
-##  8 6171      PONTIANAK pria       NA
-##  9 5108      BULELENG  wanita   2388
-## 10 5108      BULELENG  pria      894
+##    &lt;fct&gt;     &lt;fct&gt;     &lt;chr&gt;   &lt;dbl&gt;
+##  1 3520      MAGETAN   pria        0
+##  2 3520      MAGETAN   wanita   4481
+##  3 3517      JOMBANG   pria    10227
+##  4 3517      JOMBANG   wanita      0
+##  5 1571      JAMBI     pria     1368
+##  6 1571      JAMBI     wanita      0
+##  7 6171      PONTIANAK pria        0
+##  8 6171      PONTIANAK wanita      0
+##  9 5108      BULELENG  pria      894
+## 10 5108      BULELENG  wanita   2388
 ## # … with 1,012 more rows
 ```
 
@@ -1485,17 +2819,13 @@ background-size: cover
 # LATIHAN
 
 
-&lt;strong&gt;HELP!!!&lt;/strong&gt; Siti diminta oleh rekan kerjanya untuk membuat tulisan mengenai &lt;strong&gt;Hustle Culture&lt;/strong&gt; di Indonesia. Ia diminta untuk menghitung jumlah penduduk bekerja yang memiliki pekerjaan tambahan berdasarkan status perkawinan dan provinsi.
-
-
-
+&lt;strong&gt;HELP!!!&lt;/strong&gt; Siti diminta oleh rekan kerjanya untuk membuat tulisan mengenai &lt;strong&gt;Hustle Culture&lt;/strong&gt; di Indonesia. Ia diminta untuk menghitung jumlah penduduk bekerja yang memiliki pekerjaan tambahan berdasarkan status perkawinan dan kabupaten.
 
 **Oleh karena itu:** 
 1. Bantulah Siti untuk menyediakan data tersebut. 
-2. Selain itu, bantu pula Siti untuk mengetahui provinsi mana dengan Hustle Culture paling mencolok.
+2. Selain itu, bantu pula Siti untuk mengetahui kabupaten mana dengan Hustle Culture paling mencolok.
 
 **BONUS**
-
 Apa yang harus Siti lakukan jika ingin menjawab pertanyaan: apakah orang yang sudah menikah cenderung ingin cepat kaya? 
 
 
