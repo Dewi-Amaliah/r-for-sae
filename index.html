@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Presentation Ninja</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Dewi Amaliah" />
+    <meta name="date" content="2023-03-02" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="scrollable.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+class: left, middle
+
+background-image:url(images/cover2.png)
+background-size: cover
+
+---
+class: left, middle
+
+background-image:url(images/outline.png)
+background-size: cover
+---
+class: left
+
+background-image:url(images/bg2.png)
+background-size: cover
+
+# Install R dan R-Studio
+
+R dan R studio dapat diinstall dengan melihat panduan berikut:
+
+https://posit.co/download/rstudio-desktop/
+
+&lt;img src="images/frame.png" width="20%" style="display: block; margin: auto;" /&gt;
+
+---
+class: left
+
+background-image:url(images/bg2.png)
+background-size: cover
+
+# Membuat R-Project
+
+- Semacam tempat untuk menyimpan semua file yang terkait dengan project kita.
+- Sebaiknya memiliki R-project untuk setiap pekerjaan yang berbeda.
+- Berguna untuk *reproducibility* dan lebih terorganisir.
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="images/pict1.png" alt="Membuat R-Project" width="40%" height="20%" /&gt;&lt;img src="images/pict2.png" alt="Membuat R-Project" width="40%" height="20%" /&gt;
+&lt;p class="caption"&gt;Membuat R-Project&lt;/p&gt;
+&lt;/div&gt;
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# Loading Package 
+
+- Package adalah kumpulan fungsi yang digunakan untuk melakukan tugas tertentu. 
+- Package ini harus dipanggil/di-load terlebih dahulu agar dapat digunakan. 
+- Penginstall-an hanya dilakukan sekali namun harus selalu di-load untuk setiap session 
+
+
+
+.panelset[
+.panel[.panel-name[📦 Belum ter-install]
+
+
+```r
+# install package terlebih dahulu
+install.packages("foreign")
+install.packages("tidyverse")
+```
+
+
+
+```r
+# load package
+library(foreign)
+library(tidyverse)
+```
+
+
+]
+.panel[.panel-name[📦 Sudah ter-install]
+
+
+```r
+# Package bisa langsung di load 
+library(foreign)
+library(tidyverse)
+```
+]
+]
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# Pengenalan Object pada R
+
+- Segala sesuatu yang kita buat di R bisa disebut dengan object.
+- Objek-objek yang ada di R, antara lain `Vector`, `Matrix`, `Array`, `Factor`, `List`, dan `Data Frame`.
+- Pembuatan object di R dapat digunakan melalui assignment dengan symbol `&lt;-` atau `=`. 
+- Penamaan object:
+  - Diawali dengan huruf (A-Z atau a-z) atau titik (.).
+  - Tidak menggunakan spasi ataupun karakter spesial (!, @, #).
+  - Tidak menggunakan atau menghindari kata yang sudah digunakan oleh R (NULL, TRUE, FALSE, q, c, t)
+
+
+.panelset[
+.panel[.panel-name[📦 Assign Object]
+
+
+```r
+x &lt;- 1 + 2
+x
+```
+
+```
+## [1] 3
+```
+
+```r
+y = "Hello World!"
+y
+```
+
+```
+## [1] "Hello World!"
+```
+
+
+]
+.panel[.panel-name[📦 Akses Object]
+
+
+```r
+z &lt;- c("apel", "mangga", "duren")
+z[2]
+```
+
+```
+## [1] "mangga"
+```
+
+```r
+z[3]
+```
+
+```
+## [1] "duren"
+```
+
+]
+]
+
+---
+
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# Membaca Data
+
+- Pada contoh ini data yang akan dibaca adalah data Survei Angkatan Kerja Nasional Tahun 2016 (SAKERNAS).
+- Function untuk membaca data ada bermacam-macam tergantung tipe data.
+
+
+```r
+# package yang dugunakan untuk membaca format data SAKERNAS, yaitu dbf
+library(foreign)
+
+# membaca data, disimpan di dalam objek bernama sak
+sak &lt;- read.dbf(here::here("data/Sakernas 2016 pakai.dbf"))
+glimpse(sak)
+```
+
+```
+## Rows: 131,152
+## Columns: 91
+## $ TAHUN      &lt;int&gt; 20168, 20168, 20168, 20168, 20168, 20168, 20168, 20168, 201…
+## $ URUTAN     &lt;int&gt; 193, 198, 203, 206, 208, 209, 213, 219, 222, 223, 224, 225,…
+## $ FINAL_WEIG &lt;int&gt; 459, 431, 431, 510, 588, 488, 678, 505, 454, 459, 436, 734,…
+## $ PROP       &lt;int&gt; 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,…
+## $ NAMA_PROV  &lt;fct&gt; ACEH, ACEH, ACEH, ACEH, ACEH, ACEH, ACEH, ACEH, ACEH, ACEH,…
+## $ KAB        &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+## $ KODE_KABB  &lt;int&gt; 1101, 1101, 1101, 1101, 1101, 1101, 1101, 1101, 1101, 1101,…
+## $ NAMA_KAB   &lt;fct&gt; SIMEULUE, SIMEULUE, SIMEULUE, SIMEULUE, SIMEULUE, SIMEULUE,…
+## $ KODE_KEC   &lt;int&gt; 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20,…
+## $ NAMA_KEC   &lt;fct&gt; SIMEULUE TIMUR, SIMEULUE TIMUR, SIMEULUE TIMUR, SIMEULUE TI…
+## $ KODE_DESA  &lt;int&gt; 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28,…
+## $ NAMA_DESA  &lt;fct&gt; SUKA MAJU, SUKA MAJU, SUKA MAJU, SUKA MAJU, SUKA MAJU, SUKA…
+## $ KLASIFIKAS &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+## $ NBS        &lt;fct&gt; 007B, 007B, 007B, 007B, 007B, 007B, 007B, 007B, 007B, 007B,…
+## $ NKS        &lt;fct&gt; 15013, 15013, 15013, 15013, 15013, 15013, 15013, 15013, 150…
+## $ NO_DSRT    &lt;int&gt; 1, 2, 3, 4, 4, 4, 5, 7, 7, 8, 8, 8, 9, 10, 2, 2, 9, 9, 5, 3…
+## $ NURT       &lt;int&gt; 27, 36, 41, 46, 46, 46, 50, 63, 63, 70, 70, 70, 75, 100, 36…
+## $ B4_K1      &lt;int&gt; 1, 2, 2, 2, 4, 5, 2, 2, 5, 1, 2, 3, 2, 2, 1, 3, 1, 3, 1, 1,…
+## $ B4_K4      &lt;int&gt; 1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 1, 1, 1, 1, 1, 1,…
+## $ B4_K6      &lt;int&gt; 56, 42, 42, 38, 17, 15, 28, 30, 57, 58, 51, 30, 62, 30, 48,…
+## $ B4_K7      &lt;int&gt; 2, 2, 2, 2, 1, 1, 2, 2, 4, 2, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2,…
+## $ B4_K8      &lt;int&gt; 3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,…
+## $ B5_R1A     &lt;int&gt; 7, 10, 11, 7, 7, 4, 10, 7, 4, 7, 4, 4, 1, 7, 7, 11, 4, 10, …
+## $ B5_R1B     &lt;int&gt; 0, 4, 601, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 113, 0, 4, 0…
+## $ B5_R1C     &lt;int&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,…
+## $ B5_R4A     &lt;int&gt; 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1,…
+## $ B5_R4B     &lt;int&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+## $ B5_R4C     &lt;int&gt; 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1,…
+## $ B5_R4D     &lt;int&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 4, 4, 4, 4, 4, 4, 4,…
+## $ B5_R4E     &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+## $ B5_R4F     &lt;int&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+## $ B5_R5A1    &lt;int&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1,…
+## $ B5_R5A2    &lt;int&gt; 4, 4, 4, 4, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+## $ B5_R5A3    &lt;int&gt; 2, 1, 1, 1, 2, 2, 1, 1, 2, 2, 1, 2, 1, 1, 2, 2, 2, 2, 2, 2,…
+## $ B5_R5A4    &lt;int&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+## $ B5_R5B     &lt;int&gt; 4, 3, 3, 3, 2, 2, 3, 3, 4, 4, 3, 4, 3, 3, 1, 1, 1, 1, 1, 1,…
+## $ B5_R6      &lt;int&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0,…
+## $ B5_R7      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ B5_R7L     &lt;fct&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+## $ B5_R8      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ B5_R9      &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ B5_R10     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ B5_R11     &lt;int&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 2, 2,…
+## $ B5_R12     &lt;int&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,…
+## $ B5_R13     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 5, 0, 0…
+## $ B5_R14     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 3, 0, 0,…
+## $ B5_R14L    &lt;fct&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+## $ B5_R15A    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0,…
+## $ B5_R15B    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0,…
+## $ B5_R15C    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0,…
+## $ B5_R15D    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0,…
+## $ B5_R15E    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0,…
+## $ B5_R15F    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0,…
+## $ B5_R15G    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0,…
+## $ B5_R15H    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0,…
+## $ B5_R15I    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0,…
+## $ B5_R15IL   &lt;fct&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+## $ B5_R16A    &lt;int&gt; 11, 6, 6, 6, 7, 7, 6, 6, 11, 11, 6, 3, 6, 6, 4, 0, 4, 0, 4,…
+## $ B5_R16AL   &lt;fct&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+## $ B5_R16B    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ B5_R17A    &lt;int&gt; 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2,…
+## $ B5_R17B    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 1, 0, 1, 0, 0,…
+## $ B5_R18     &lt;int&gt; 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 2, 1, 2, 2, 0, 0, 0, 0, 0, 0,…
+## $ B5_R34     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2,…
+## $ B5_R35     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ B5_R36     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ B5_R37A1   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 10, 14, 14, 1…
+## $ B5_R37A2   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 10, 14, 14, 1…
+## $ B5_R37A3   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 10, 14, 14, 1…
+## $ B5_R37A4   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 14, 14, 16…
+## $ B5_R37A5   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4,…
+## $ B5_R37A6   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 10, 0, 0, 16,…
+## $ B5_R37A7   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 10, 14, 14, 1…
+## $ B5_R37A8   &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 60, 50, 70, 70, 9…
+## $ B5_R37A    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 60, 50, 70, 70, 9…
+## $ B5_R37B    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 60, 50, 98, 98, 7…
+## $ B5_R38A    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2,…
+## $ B5_R38B    &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ B5_R39     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ B5_R46     &lt;int&gt; 2, 1, 1, 1, 2, 2, 1, 1, 2, 2, 1, 2, 1, 1, 2, 2, 2, 2, 2, 2,…
+## $ B5_R47A    &lt;int&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,…
+## $ B5_R47B    &lt;int&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+## $ B5_R47C    &lt;int&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,…
+## $ B5_R47D    &lt;int&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,…
+## $ B5_R48A    &lt;int&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0,…
+## $ B5_R48B    &lt;int&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0,…
+## $ B5_R49     &lt;fct&gt; NA, B, B, B, NA, NA, B, B, NA, NA, B, NA, B, B, A, A, A, A,…
+## $ B5_R50     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ B5_R51     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ B5_R52     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ STRATA_SAK &lt;fct&gt; 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13,…
+```
+
+---
+class: left
+
+background-image:url(images/bg2.png)
+background-size: cover
+
+# Merapikan Data
+
+- Sebelum bisa dimodelkan, (hampir selalu) kita harus merapikan data karena terkadang formatnya tidak sesuai yang kita inginkan. 
+- Beberapa langkah merapikan data adalah:
+  - Memilih (select) variabel
+  - Mengubah nama (rename) data
+  - Memfilter observasi
+  - Mengubah tipe data 
+  - Mengubah level pada data
+  - Grouping dan summarise data
+  - Perubahan bentuk data
+  - Join data
+  
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# Memilih Variabel
+
+- Pemilihan variabel dapat digunakan dengan menggunakan fungsi `select`.
+- Tanda `%&gt;%` adalah "pipe" artinya semacam "next".
+
+
+```r
+# misalnya dalam hal ini kita ingin memilih variabel tahun (TAHUN), penimbang (FINAL_WEIG), provinsi (PROP), kode_kab (KODE_KABB), kode_kec (KODE_KEC), kode_desa (KODE_DESA), klasifikasi desa kota (KLASIFIKAS), jenis kelamin (B4_K4), umur (B4_K6), status sekolah (B4_K8), pendidikan terakhir (B5_R1A), status perkawinan (B4_K7), status bekerja (B5_R5A1), kegiatan paling banyak (B5_R5B), dan apakah memiliki pekerjaan tambahan atau tidak (B5_R34)
+
+sak_select &lt;- sak %&gt;%
+  select(TAHUN, FINAL_WEIG, PROP, KODE_KABB, KODE_KEC,
+         KODE_DESA, KLASIFIKAS, B4_K4, B4_K6, B4_K8, B5_R1A,
+         B4_K7, B5_R5A1, B5_R5B, B5_R34)
+
+glimpse(sak_select)
+```
+
+```
+## Rows: 131,152
+## Columns: 15
+## $ TAHUN      &lt;int&gt; 20168, 20168, 20168, 20168, 20168, 20168, 20168, 20168, 201…
+## $ FINAL_WEIG &lt;int&gt; 459, 431, 431, 510, 588, 488, 678, 505, 454, 459, 436, 734,…
+## $ PROP       &lt;int&gt; 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,…
+## $ KODE_KABB  &lt;int&gt; 1101, 1101, 1101, 1101, 1101, 1101, 1101, 1101, 1101, 1101,…
+## $ KODE_KEC   &lt;int&gt; 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20,…
+## $ KODE_DESA  &lt;int&gt; 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28,…
+## $ KLASIFIKAS &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+## $ B4_K4      &lt;int&gt; 1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 1, 1, 1, 1, 1, 1,…
+## $ B4_K6      &lt;int&gt; 56, 42, 42, 38, 17, 15, 28, 30, 57, 58, 51, 30, 62, 30, 48,…
+## $ B4_K8      &lt;int&gt; 3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,…
+## $ B5_R1A     &lt;int&gt; 7, 10, 11, 7, 7, 4, 10, 7, 4, 7, 4, 4, 1, 7, 7, 11, 4, 10, …
+## $ B4_K7      &lt;int&gt; 2, 2, 2, 2, 1, 1, 2, 2, 4, 2, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2,…
+## $ B5_R5A1    &lt;int&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1,…
+## $ B5_R5B     &lt;int&gt; 4, 3, 3, 3, 2, 2, 3, 3, 4, 4, 3, 4, 3, 3, 1, 1, 1, 1, 1, 1,…
+## $ B5_R34     &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2,…
+```
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# Mengubah nama variabel
+
+- Nama variabel masih dalam bentuk rincian kuesioner. 
+- Tidak dapat diketahui maknanya tanpa mengacu pada *data dictionary* atau kuesioner.
+- Mengubah nama variabel dapat digunakan dengan menggunakan fungsi `rename`.
+
+
+```r
+sak_renamed &lt;- sak_select %&gt;%
+  rename(tahun = TAHUN,
+         penimbang = FINAL_WEIG,
+         kotadesa = KLASIFIKAS,
+         kode_prov = PROP,
+         kode_kab = KODE_KABB,
+         kode_kec = KODE_KEC,
+         kode_desa = KODE_DESA,
+         jk = B4_K4,
+         umur = B4_K6,
+         sekolah = B4_K8,
+         ijazah = B5_R1A,
+         kawin = B4_K7,
+         bekerja = B5_R5A1,
+         kegiatan = B5_R5B,
+         kerja_tambahan = B5_R34)
+
+glimpse(sak_renamed)
+```
+
+```
+## Rows: 131,152
+## Columns: 15
+## $ tahun          &lt;int&gt; 20168, 20168, 20168, 20168, 20168, 20168, 20168, 20168,…
+## $ penimbang      &lt;int&gt; 459, 431, 431, 510, 588, 488, 678, 505, 454, 459, 436, …
+## $ kode_prov      &lt;int&gt; 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,…
+## $ kode_kab       &lt;int&gt; 1101, 1101, 1101, 1101, 1101, 1101, 1101, 1101, 1101, 1…
+## $ kode_kec       &lt;int&gt; 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20,…
+## $ kode_desa      &lt;int&gt; 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28,…
+## $ kotadesa       &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ jk             &lt;int&gt; 1, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 1, 1, 1, 1, 1…
+## $ umur           &lt;int&gt; 56, 42, 42, 38, 17, 15, 28, 30, 57, 58, 51, 30, 62, 30,…
+## $ sekolah        &lt;int&gt; 3, 3, 3, 3, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3…
+## $ ijazah         &lt;int&gt; 7, 10, 11, 7, 7, 4, 10, 7, 4, 7, 4, 4, 1, 7, 7, 11, 4, …
+## $ kawin          &lt;int&gt; 2, 2, 2, 2, 1, 1, 2, 2, 4, 2, 2, 1, 2, 2, 2, 1, 2, 1, 2…
+## $ bekerja        &lt;int&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1…
+## $ kegiatan       &lt;int&gt; 4, 3, 3, 3, 2, 2, 3, 3, 4, 4, 3, 4, 3, 3, 1, 1, 1, 1, 1…
+## $ kerja_tambahan &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2…
+```
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# Filter observasi
+
+Contoh kasus:
+
+- Kita ingin memfilter observasi/responden yang statusnya benar-benar bekerja 
+- Variabel `bekerja` berkode 1 dan variabel `kegiatan` berkode 1
+- Hal ini dapat dilakukan dengan *filtering* observasi yang dapat dilakukan dengan fungsi `filter()`
+
+
+```r
+sak_bekerja &lt;- sak_renamed %&gt;%
+  filter(bekerja == 1 &amp; kegiatan == 1)
+
+nrow(sak_bekerja)
+```
+
+```
+## [1] 73222
+```
+
+
+
+
+Sebanyak 73222 orang dari 131152 keseluruhan sampel SAKERNAS berstatus **bekerja**
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# Mengubah tipe data
+
+- Terdapat beberapa tipe data: **numeric**, **character**, **integer**, **factor**, **date**, **logical**
+- Tipe data harus benar karena fungsi-fungsi pada `R` hanya akan berjalan apabila tipe datanya benar
+
+.panelset[
+.panel[.panel-name[📦 Data]
+
+
+```r
+glimpse(sak_bekerja)
+```
+
+```
+## Rows: 73,222
+## Columns: 15
+## $ tahun          &lt;int&gt; 20168, 20168, 20168, 20168, 20168, 20168, 20168, 20168,…
+## $ penimbang      &lt;int&gt; 457, 488, 459, 734, 858, 515, 734, 436, 457, 588, 508, …
+## $ kode_prov      &lt;int&gt; 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,…
+## $ kode_kab       &lt;int&gt; 1101, 1101, 1101, 1101, 1101, 1101, 1101, 1101, 1101, 1…
+## $ kode_kec       &lt;int&gt; 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20,…
+## $ kode_desa      &lt;int&gt; 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 30, 30, 30,…
+## $ kotadesa       &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ jk             &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 2, 1, 1…
+## $ umur           &lt;int&gt; 48, 19, 56, 34, 29, 44, 32, 51, 46, 18, 35, 41, 48, 38,…
+## $ sekolah        &lt;int&gt; 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3…
+## $ ijazah         &lt;int&gt; 7, 11, 4, 10, 7, 10, 10, 7, 10, 10, 10, 10, 10, 7, 14, …
+## $ kawin          &lt;int&gt; 2, 1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2…
+## $ bekerja        &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ kegiatan       &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ kerja_tambahan &lt;int&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2…
+```
+]
+
+.panel[.panel-name[📦 Mengubah tipe data (satu persatu)]
+
+- "Membuat" variabel baru dengan nama yang sama dengan fungsi `mutate`
+- Lalu meng-*assign* tipe variabel yang baru 
+- Hampir semua variabel tidak sesuai data typenya 
+
+
+```r
+# yang tidak perlu diubah tipenya hanya umur dan penimbang
+
+sak_dattype &lt;- sak_bekerja %&gt;%
+  mutate(kode_prov = as.factor(kode_prov),
+         kode_kab = as.factor(kode_kab),
+         kode_kec = as.factor(kode_kec),
+         kode_desa = as.factor(kode_desa),
+         kotadesa = as.factor(kotadesa),
+         jk = as.factor(jk),
+         sekolah = as.factor(sekolah),
+         ijazah = as.factor(ijazah),
+         kawin = as.factor(kawin),
+         bekerja = as.factor(bekerja),
+         kegiatan = as.factor(kegiatan),
+         kerja_tambahan = as.factor(kerja_tambahan)
+         )
+```
+]
+
+.panel[.panel-name[📦 Mengubah tipe data (sekaligus)]
+
+- Cara sebelumnya cukup "repot" karena mengubah variable harus dilakukan satu per satu
+- Menggunakan function untuk mengubah sekaligus
+
+
+```r
+# membuat function untuk mengubah tipe data
+factorize &lt;- function(x){
+  factor(x)
+}
+
+# memilih nama variabel yg akan diubah tipe datanya
+select_var &lt;- sak_bekerja %&gt;%
+  select(-umur, -penimbang, -tahun) %&gt;%
+  names()
+
+# mengubah tipe data
+sak_dattype_v2 &lt;- sak_bekerja %&gt;%
+  mutate_at(vars(select_var), factorize)
+
+glimpse(sak_dattype_v2)
+```
+
+```
+## Rows: 73,222
+## Columns: 15
+## $ tahun          &lt;int&gt; 20168, 20168, 20168, 20168, 20168, 20168, 20168, 20168,…
+## $ penimbang      &lt;int&gt; 457, 488, 459, 734, 858, 515, 734, 436, 457, 588, 508, …
+## $ kode_prov      &lt;fct&gt; 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,…
+## $ kode_kab       &lt;fct&gt; 1101, 1101, 1101, 1101, 1101, 1101, 1101, 1101, 1101, 1…
+## $ kode_kec       &lt;fct&gt; 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20,…
+## $ kode_desa      &lt;fct&gt; 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 30, 30, 30,…
+## $ kotadesa       &lt;fct&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ jk             &lt;fct&gt; 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 2, 1, 1…
+## $ umur           &lt;int&gt; 48, 19, 56, 34, 29, 44, 32, 51, 46, 18, 35, 41, 48, 38,…
+## $ sekolah        &lt;fct&gt; 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3…
+## $ ijazah         &lt;fct&gt; 7, 11, 4, 10, 7, 10, 10, 7, 10, 10, 10, 10, 10, 7, 14, …
+## $ kawin          &lt;fct&gt; 2, 1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2…
+## $ bekerja        &lt;fct&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ kegiatan       &lt;fct&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
+## $ kerja_tambahan &lt;fct&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2…
+```
+]
+]
+
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# Mengubah level pada data
+
+- Data masih berupa kode (1, 2, 3, dst)
+- Perlu diganti (recode) agar lebih mudah diinterpretasikan
+
+
+```r
+sak_leveled &lt;- sak_dattype_v2 %&gt;%
+  mutate(jk = recode_factor(jk, `1` = "pria",
+                             `2` = "wanita"),
+         kawin = recode_factor(kawin, `1` = "belum kawin",
+                                  `2` = "kawin",
+                                  `3` = "cerai hidup",
+                                  `4` = "cerai mati"),
+         sekolah = recode_factor(sekolah, `1` = "never",
+                                `2` = "at school",
+                                `3` = "graduated"),
+         ijazah = recode_factor(ijazah, `1` = "tidak punya",
+                                `2` = "Paket A",
+                                `3` = "SDLB",
+                                `4` = "SD/MI",
+                                `5` = "Paket B",
+                                `6` = "SMPLB",
+                                `7` = "SMP/MTs",
+                                `8` = "Paket C",
+                                `9` = "SMLB",
+                                `10` = "SMA/MA",
+                                `11` = "SMK/MAK",
+                                `12` = "Diploma I/II",
+                                `13` = "Diploma III",
+                                `14` = "Diploma IV/S1",
+                                `15` = "S2",
+                                `16` = "S3"),
+         bekerja = recode_factor(bekerja, `1` = "ya",
+                              `2` = "tidak"),
+         kegiatan = recode_factor(kegiatan, `1` = "ya",
+                                    `2` = "tidak"),
+         kerja_tambahan = recode_factor(kerja_tambahan, `1` = "ya",
+                                         `2` = "tidak")) %&gt;%
+  mutate(ijazah = fct_collapse(ijazah, `SD setara` = c("Paket A", "SDLB", "SD/MI"),
+                               `SMP setara` = c("Paket B", "SMPLB", "SMP/MTs"),
+                               `SMA setara` = c("Paket C", "SMLB", "SMA/MA", "SMK/MAK"),
+                               `Diploma` = c("Diploma I/II", "Diploma III")))
+```
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# *Grouping* dan *Summarise* data
+
+- Misalnya kita ingin melakukan agregasi data dari level individu -&gt; kabupaten 
+- Dapat dilakukan dengan *grouping* dan *summarise*
+- Contoh kasus: mengetahui jumlah lulusan SD di seluruh kabupaten di Indonesia berdasarkan jenis kelamin
+- Perlu memperhatikan variabel penimbang
+
+
+```r
+lulusan_sd &lt;- sak_leveled %&gt;%
+  #filter lulusan SD terlebih dahulu
+  filter(ijazah == "SD setara") %&gt;%
+  # group berdasarkan jenis kelamin dan kabupaten 
+  group_by(kode_kab, jk) %&gt;%
+  summarise(jumlah = sum(penimbang, na.rm = TRUE)) %&gt;%
+  ungroup()
+
+lulusan_sd
+```
+
+```
+## # A tibble: 1,014 × 3
+##    kode_kab jk     jumlah
+##    &lt;fct&gt;    &lt;fct&gt;   &lt;int&gt;
+##  1 1101     pria    13103
+##  2 1101     wanita    464
+##  3 1102     pria     7178
+##  4 1102     wanita   3523
+##  5 1103     pria    20553
+##  6 1103     wanita   2385
+##  7 1104     pria     5146
+##  8 1104     wanita   8222
+##  9 1105     pria    19375
+## 10 1105     wanita   9536
+## # … with 1,004 more rows
+```
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+
+# *Joining* data
+
+- Pada saat grouping by kabupaten, hanya ada kode kabupaten
+- Diperlukan nama kabupaten kota dengan melakukan join dengan tabel lain
+
+
+```r
+kode_kab &lt;- sak %&gt;%
+  select(KODE_KABB, NAMA_KAB) %&gt;%
+  #dibutuhkan tipe data yang sama untuk join 
+  mutate(KODE_KABB = as.factor(KODE_KABB)) %&gt;%
+  distinct(.keep_all = TRUE)
+
+lulusan_sd_joined &lt;- left_join(kode_kab, lulusan_sd, by = c("KODE_KABB" = "kode_kab"))
+
+lulusan_sd_joined
+```
+
+```
+##      KODE_KABB                   NAMA_KAB     jk jumlah
+## 1         1101                   SIMEULUE   pria  13103
+## 2         1101                   SIMEULUE wanita    464
+## 3         1102               ACEH SINGKIL   pria   7178
+## 4         1102               ACEH SINGKIL wanita   3523
+## 5         1103               ACEH SELATAN   pria  20553
+## 6         1103               ACEH SELATAN wanita   2385
+## 7         1104              ACEH TENGGARA   pria   5146
+## 8         1104              ACEH TENGGARA wanita   8222
+## 9         1105                 ACEH TIMUR   pria  19375
+## 10        1105                 ACEH TIMUR wanita   9536
+## 11        1106                ACEH TENGAH   pria   7555
+## 12        1106                ACEH TENGAH wanita   8419
+## 13        1107                 ACEH BARAT   pria   8715
+## 14        1107                 ACEH BARAT wanita   4799
+## 15        1108                 ACEH BESAR   pria  20196
+## 16        1108                 ACEH BESAR wanita   3009
+## 17        1109                      PIDIE   pria   9608
+## 18        1109                      PIDIE wanita   8920
+## 19        1110                    BIREUEN   pria  19113
+## 20        1110                    BIREUEN wanita   6156
+## 21        1111                 ACEH UTARA   pria  18738
+## 22        1111                 ACEH UTARA wanita   8183
+## 23        1112            ACEH BARAT DAYA   pria  12530
+## 24        1112            ACEH BARAT DAYA wanita   1333
+## 25        1113                  GAYO LUES   pria   8625
+## 26        1113                  GAYO LUES wanita  13588
+## 27        1114               ACEH TAMIANG   pria  18401
+## 28        1114               ACEH TAMIANG wanita   4419
+## 29        1115                 NAGAN RAYA   pria   9152
+## 30        1115                 NAGAN RAYA wanita   1529
+## 31        1116                  ACEH JAYA   pria  16669
+## 32        1116                  ACEH JAYA wanita   4458
+## 33        1117               BENER MERIAH   pria  10497
+## 34        1117               BENER MERIAH wanita   7368
+## 35        1118                 PIDIE JAYA   pria   8874
+## 36        1118                 PIDIE JAYA wanita   3462
+## 37        1171                 BANDA ACEH   pria   1586
+## 38        1171                 BANDA ACEH wanita    851
+## 39        1172                     SABANG   pria   3829
+## 40        1172                     SABANG wanita   2750
+## 41        1173                     LANGSA   pria   6958
+## 42        1173                     LANGSA wanita   3572
+## 43        1174                LHOKSEUMAWE   pria   7005
+## 44        1174                LHOKSEUMAWE wanita   2867
+## 45        1175               SUBULUSSALAM   pria  11349
+## 46        1175               SUBULUSSALAM wanita   4273
+## 47        1201                       NIAS   pria  28819
+## 48        1201                       NIAS wanita  19944
+## 49        1202           MANDAILING NATAL   pria  40512
+## 50        1202           MANDAILING NATAL wanita  29066
+## 51        1203           TAPANULI SELATAN   pria  21386
+## 52        1203           TAPANULI SELATAN wanita  12262
+## 53        1204            TAPANULI TENGAH   pria  15106
+## 54        1204            TAPANULI TENGAH wanita  15792
+## 55        1205             TAPANULI UTARA   pria  10534
+## 56        1205             TAPANULI UTARA wanita  14898
+## 57        1206               TOBA SAMOSIR   pria   4543
+## 58        1206               TOBA SAMOSIR wanita   6111
+## 59        1207               LABUHAN BATU   pria  46428
+## 60        1207               LABUHAN BATU wanita   8238
+## 61        1208                     ASAHAN   pria  43875
+## 62        1208                     ASAHAN wanita  16922
+## 63        1209                 SIMALUNGUN   pria  32209
+## 64        1209                 SIMALUNGUN wanita  20725
+## 65        1210                      DAIRI   pria  19699
+## 66        1210                      DAIRI wanita  13687
+## 67        1211                       KARO   pria  17029
+## 68        1211                       KARO wanita  26440
+## 69        1212               DELI SERDANG   pria  33846
+## 70        1212               DELI SERDANG wanita  16186
+## 71        1213                    LANGKAT   pria  28659
+## 72        1213                    LANGKAT wanita  11355
+## 73        1214               NIAS SELATAN   pria  15737
+## 74        1214               NIAS SELATAN wanita   7361
+## 75        1215         HUMBANG HASUNDUTAN   pria   9752
+## 76        1215         HUMBANG HASUNDUTAN wanita   5449
+## 77        1216              PAKPAK BHARAT   pria  14746
+## 78        1216              PAKPAK BHARAT wanita   7813
+## 79        1217                    SAMOSIR   pria  10977
+## 80        1217                    SAMOSIR wanita   7532
+## 81        1218            SERDANG BEDAGAI   pria  27062
+## 82        1218            SERDANG BEDAGAI wanita   5758
+## 83        1219                  BATU BARA   pria  31993
+## 84        1219                  BATU BARA wanita  10582
+## 85        1220         PADANG LAWAS UTARA   pria  23732
+## 86        1220         PADANG LAWAS UTARA wanita   7757
+## 87        1221               PADANG LAWAS   pria  13470
+## 88        1221               PADANG LAWAS wanita   9504
+## 89        1222       LABUHAN BATU SELATAN   pria  39777
+## 90        1222       LABUHAN BATU SELATAN wanita  12175
+## 91        1223         LABUHAN BATU UTARA   pria  29714
+## 92        1223         LABUHAN BATU UTARA wanita   8178
+## 93        1224                 NIAS UTARA   pria  32324
+## 94        1224                 NIAS UTARA wanita  31560
+## 95        1225                 NIAS BARAT   pria  15255
+## 96        1225                 NIAS BARAT wanita  12706
+## 97        1271                    SIBOLGA   pria   8580
+## 98        1271                    SIBOLGA wanita   6960
+## 99        1272              TANJUNG BALAI   pria  15324
+## 100       1272              TANJUNG BALAI wanita  10360
+## 101       1273           PEMATANG SIANTAR   pria   8467
+## 102       1273           PEMATANG SIANTAR wanita   5596
+## 103       1274              TEBING TINGGI   pria  10734
+## 104       1274              TEBING TINGGI wanita   9880
+## 105       1275                      MEDAN   pria  26204
+## 106       1275                      MEDAN wanita   5697
+## 107       1276                     BINJAI   pria  14730
+## 108       1276                     BINJAI wanita  12855
+## 109       1277            PADANGSIDIMPUAN   pria  11960
+## 110       1277            PADANGSIDIMPUAN wanita   8278
+## 111       1278               GUNUNGSITOLI   pria  12672
+## 112       1278               GUNUNGSITOLI wanita   9385
+## 113       1301         KEPULAUAN MENTAWAI   pria  12928
+## 114       1301         KEPULAUAN MENTAWAI wanita   8463
+## 115       1302            PESISIR SELATAN   pria  18309
+## 116       1302            PESISIR SELATAN wanita   3235
+## 117       1303                      SOLOK   pria  24571
+## 118       1303                      SOLOK wanita  12263
+## 119       1304                  SIJUNJUNG   pria  19146
+## 120       1304                  SIJUNJUNG wanita   7045
+## 121       1305                TANAH DATAR   pria  13229
+## 122       1305                TANAH DATAR wanita   8008
+## 123       1306            PADANG PARIAMAN   pria  14538
+## 124       1306            PADANG PARIAMAN wanita   1923
+## 125       1307                       AGAM   pria  18234
+## 126       1307                       AGAM wanita  17228
+## 127       1308            LIMA PULUH KOTA   pria  21678
+## 128       1308            LIMA PULUH KOTA wanita   7868
+## 129       1309                    PASAMAN   pria  11931
+## 130       1309                    PASAMAN wanita  12996
+## 131       1310              SOLOK SELATAN   pria   7639
+## 132       1310              SOLOK SELATAN wanita   3549
+## 133       1311                DHARMASRAYA   pria  23962
+## 134       1311                DHARMASRAYA wanita   8800
+## 135       1312              PASAMAN BARAT   pria  19015
+## 136       1312              PASAMAN BARAT wanita  17347
+## 137       1371                     PADANG   pria  10233
+## 138       1371                     PADANG wanita   4852
+## 139       1372                      SOLOK   pria   8344
+## 140       1372                      SOLOK wanita   4658
+## 141       1373                SAWAH LUNTO   pria  10686
+## 142       1373                SAWAH LUNTO wanita   1411
+## 143       1374             PADANG PANJANG   pria    645
+## 144       1374             PADANG PANJANG wanita    822
+## 145       1375                BUKITTINGGI   pria   9614
+## 146       1375                BUKITTINGGI wanita   3686
+## 147       1376                 PAYAKUMBUH   pria  16254
+## 148       1376                 PAYAKUMBUH wanita   2538
+## 149       1377                   PARIAMAN   pria   5448
+## 150       1377                   PARIAMAN wanita   3082
+## 151       1401           KUANTAN SINGINGI   pria  34365
+## 152       1401           KUANTAN SINGINGI wanita  14056
+## 153       1402             INDRAGIRI HULU   pria  52008
+## 154       1402             INDRAGIRI HULU wanita  19649
+## 155       1403            INDRAGIRI HILIR   pria  48288
+## 156       1403            INDRAGIRI HILIR wanita  12809
+## 157       1404                  PELALAWAN   pria  36780
+## 158       1404                  PELALAWAN wanita  10839
+## 159       1405                    S I A K   pria  30734
+## 160       1405                    S I A K wanita   3316
+## 161       1406                     KAMPAR   pria  39585
+## 162       1406                     KAMPAR wanita   5034
+## 163       1407                 ROKAN HULU   pria  43899
+## 164       1407                 ROKAN HULU wanita  17599
+## 165       1408                  BENGKALIS   pria  25380
+## 166       1408                  BENGKALIS wanita   6329
+## 167       1409                ROKAN HILIR   pria  64876
+## 168       1409                ROKAN HILIR wanita  14429
+## 169       1410          KEPULAUAN MERANTI   pria  26445
+## 170       1410          KEPULAUAN MERANTI wanita   5974
+## 171       1471                  PEKANBARU   pria  19594
+## 172       1471                  PEKANBARU wanita   5843
+## 173       1473                  D U M A I   pria  21612
+## 174       1473                  D U M A I wanita   8135
+## 175       1501                    KERINCI   pria  19095
+## 176       1501                    KERINCI wanita  11704
+## 177       1502                   MERANGIN   pria  43724
+## 178       1502                   MERANGIN wanita   8834
+## 179       1503                 SAROLANGUN   pria  31900
+## 180       1503                 SAROLANGUN wanita  20731
+## 181       1504                BATANG HARI   pria  24682
+## 182       1504                BATANG HARI wanita   6215
+## 183       1505                MUARO JAMBI   pria  31063
+## 184       1505                MUARO JAMBI wanita   8661
+## 185       1506       TANJUNG JABUNG TIMUR   pria  33777
+## 186       1506       TANJUNG JABUNG TIMUR wanita   5547
+## 187       1507       TANJUNG JABUNG BARAT   pria  35339
+## 188       1507       TANJUNG JABUNG BARAT wanita  10733
+## 189       1508                       TEBO   pria  44261
+## 190       1508                       TEBO wanita  17040
+## 191       1509                      BUNGO   pria  21512
+## 192       1509                      BUNGO wanita   8551
+## 193       1571                      JAMBI   pria  19248
+## 194       1571                      JAMBI wanita   5922
+## 195       1572               SUNGAI PENUH   pria   2760
+## 196       1572               SUNGAI PENUH wanita   3699
+## 197       1601          OGAN KOMERING ULU   pria  42202
+## 198       1601          OGAN KOMERING ULU wanita  17151
+## 199       1602         OGAN KOMERING ILIR   pria  45835
+## 200       1602         OGAN KOMERING ILIR wanita  26369
+## 201       1603                 MUARA ENIM   pria  40645
+## 202       1603                 MUARA ENIM wanita  20828
+## 203       1604                      LAHAT   pria  28265
+## 204       1604                      LAHAT wanita  15538
+## 205       1605                 MUSI RAWAS   pria  48531
+## 206       1605                 MUSI RAWAS wanita  38770
+## 207       1606             MUSI BANYUASIN   pria  73201
+## 208       1606             MUSI BANYUASIN wanita  21328
+## 209       1607                 BANYU ASIN   pria  66622
+## 210       1607                 BANYU ASIN wanita  14202
+## 211       1608  OGAN KOMERING ULU SELATAN   pria  58519
+## 212       1608  OGAN KOMERING ULU SELATAN wanita  19900
+## 213       1609    OGAN KOMERING ULU TIMUR   pria  44737
+## 214       1609    OGAN KOMERING ULU TIMUR wanita  19653
+## 215       1610                  OGAN ILIR   pria  57448
+## 216       1610                  OGAN ILIR wanita  38717
+## 217       1611               EMPAT LAWANG   pria  39635
+## 218       1611               EMPAT LAWANG wanita  23452
+## 219       1612 PENUKAL ABAB LEMATANG ILIR   pria  16940
+## 220       1612 PENUKAL ABAB LEMATANG ILIR wanita  11146
+## 221       1613           MUSI RAWAS UTARA   pria  19989
+## 222       1613           MUSI RAWAS UTARA wanita  12552
+## 223       1671                  PALEMBANG   pria  28756
+## 224       1671                  PALEMBANG wanita   8917
+## 225       1672                 PRABUMULIH   pria  16727
+## 226       1672                 PRABUMULIH wanita   7960
+## 227       1673                 PAGAR ALAM   pria  18564
+## 228       1673                 PAGAR ALAM wanita  11504
+## 229       1674               LUBUKLINGGAU   pria  30914
+## 230       1674               LUBUKLINGGAU wanita  10997
+## 231       1701           BENGKULU SELATAN   pria   7211
+## 232       1701           BENGKULU SELATAN wanita   6494
+## 233       1702              REJANG LEBONG   pria  17199
+## 234       1702              REJANG LEBONG wanita  10484
+## 235       1703             BENGKULU UTARA   pria  10941
+## 236       1703             BENGKULU UTARA wanita   4335
+## 237       1704                       KAUR   pria   7769
+## 238       1704                       KAUR wanita   5888
+## 239       1705                     SELUMA   pria  15072
+## 240       1705                     SELUMA wanita   8988
+## 241       1706                   MUKOMUKO   pria  14382
+## 242       1706                   MUKOMUKO wanita   4904
+## 243       1707                     LEBONG   pria   8332
+## 244       1707                     LEBONG wanita  11167
+## 245       1708                  KEPAHIANG   pria   9875
+## 246       1708                  KEPAHIANG wanita   6478
+## 247       1709            BENGKULU TENGAH   pria  13560
+## 248       1709            BENGKULU TENGAH wanita   3963
+## 249       1771                   BENGKULU   pria   8757
+## 250       1771                   BENGKULU wanita   5608
+## 251       1801              LAMPUNG BARAT   pria  43219
+## 252       1801              LAMPUNG BARAT wanita  37610
+## 253       1802                  TANGGAMUS   pria  62768
+## 254       1802                  TANGGAMUS wanita  25854
+## 255       1803            LAMPUNG SELATAN   pria  51921
+## 256       1803            LAMPUNG SELATAN wanita  21114
+## 257       1804              LAMPUNG TIMUR   pria  49575
+## 258       1804              LAMPUNG TIMUR wanita  19723
+## 259       1805             LAMPUNG TENGAH   pria  44447
+## 260       1805             LAMPUNG TENGAH wanita   6471
+## 261       1806              LAMPUNG UTARA   pria  59709
+## 262       1806              LAMPUNG UTARA wanita  29225
+## 263       1807                  WAY KANAN   pria  62461
+## 264       1807                  WAY KANAN wanita  25447
+## 265       1808               TULANGBAWANG   pria  53777
+## 266       1808               TULANGBAWANG wanita  11326
+## 267       1809                  PESAWARAN   pria  55573
+## 268       1809                  PESAWARAN wanita  13132
+## 269       1810                  PRINGSEWU   pria  51471
+## 270       1810                  PRINGSEWU wanita  29834
+## 271       1811                     MESUJI   pria  54771
+## 272       1811                     MESUJI wanita  16730
+## 273       1812        TULANG BAWANG BARAT   pria  38697
+## 274       1812        TULANG BAWANG BARAT wanita  16771
+## 275       1813              PESISIR BARAT   pria  10085
+## 276       1813              PESISIR BARAT wanita   2676
+## 277       1871             BANDAR LAMPUNG   pria  34313
+## 278       1871             BANDAR LAMPUNG wanita  19698
+## 279       1872                      METRO   pria  13723
+## 280       1872                      METRO wanita   9865
+## 281       1901                     BANGKA   pria   9999
+## 282       1901                     BANGKA wanita   5586
+## 283       1902                   BELITUNG   pria  10691
+## 284       1902                   BELITUNG wanita   8878
+## 285       1903               BANGKA BARAT   pria  18013
+## 286       1903               BANGKA BARAT wanita   4239
+## 287       1904              BANGKA TENGAH   pria  19848
+## 288       1904              BANGKA TENGAH wanita   6412
+## 289       1905             BANGKA SELATAN   pria  35038
+## 290       1905             BANGKA SELATAN wanita   9757
+## 291       1906             BELITUNG TIMUR   pria  20592
+## 292       1906             BELITUNG TIMUR wanita   8819
+## 293       1971             PANGKAL PINANG   pria   8311
+## 294       1971             PANGKAL PINANG wanita   2672
+## 295       2101                    KARIMUN   pria  28624
+## 296       2101                    KARIMUN wanita    914
+## 297       2102                     BINTAN   pria  10486
+## 298       2102                     BINTAN wanita   4308
+## 299       2103                     NATUNA   pria  13236
+## 300       2103                     NATUNA wanita   4131
+## 301       2104                     LINGGA   pria   7905
+## 302       2104                     LINGGA wanita   2002
+## 303       2105          KEPULAUAN ANAMBAS   pria   5836
+## 304       2105          KEPULAUAN ANAMBAS wanita   4646
+## 305       2171                  B A T A M   pria  13364
+## 306       2171                  B A T A M wanita   3656
+## 307       2172             TANJUNG PINANG   pria  10544
+## 308       2172             TANJUNG PINANG wanita   3197
+## 309       3101           KEPULAUAN SERIBU   pria  37360
+## 310       3101           KEPULAUAN SERIBU wanita   9503
+## 311       3171            JAKARTA SELATAN   pria  69367
+## 312       3171            JAKARTA SELATAN wanita  51856
+## 313       3172              JAKARTA TIMUR   pria  63127
+## 314       3172              JAKARTA TIMUR wanita  57757
+## 315       3173              JAKARTA PUSAT   pria  36699
+## 316       3173              JAKARTA PUSAT wanita  29774
+## 317       3174              JAKARTA BARAT   pria  42119
+## 318       3174              JAKARTA BARAT wanita  36917
+## 319       3175              JAKARTA UTARA   pria  83035
+## 320       3175              JAKARTA UTARA wanita  54860
+## 321       3201                      BOGOR   pria 215240
+## 322       3201                      BOGOR wanita  42829
+## 323       3202                   SUKABUMI   pria 222079
+## 324       3202                   SUKABUMI wanita  67986
+## 325       3203                    CIANJUR   pria 257859
+## 326       3203                    CIANJUR wanita  76553
+## 327       3204                    BANDUNG   pria 267375
+## 328       3204                    BANDUNG wanita  60706
+## 329       3205                      GARUT   pria 198589
+## 330       3205                      GARUT wanita  56999
+## 331       3206                TASIKMALAYA   pria 243587
+## 332       3206                TASIKMALAYA wanita  73022
+## 333       3207                     CIAMIS   pria  87717
+## 334       3207                     CIAMIS wanita  33163
+## 335       3208                   KUNINGAN   pria 176706
+## 336       3208                   KUNINGAN wanita  37445
+## 337       3209                    CIREBON   pria 182128
+## 338       3209                    CIREBON wanita  43237
+## 339       3210                 MAJALENGKA   pria 176675
+## 340       3210                 MAJALENGKA wanita  97934
+## 341       3211                   SUMEDANG   pria 188147
+## 342       3211                   SUMEDANG wanita  76044
+## 343       3212                  INDRAMAYU   pria 151066
+## 344       3212                  INDRAMAYU wanita  43086
+## 345       3213                     SUBANG   pria 149464
+## 346       3213                     SUBANG wanita  45493
+## 347       3214                 PURWAKARTA   pria 128167
+## 348       3214                 PURWAKARTA wanita  38489
+## 349       3215                   KARAWANG   pria 152031
+## 350       3215                   KARAWANG wanita  25183
+## 351       3216                     BEKASI   pria 172309
+## 352       3216                     BEKASI wanita  31195
+## 353       3217              BANDUNG BARAT   pria 208114
+## 354       3217              BANDUNG BARAT wanita  25042
+## 355       3218                PANGANDARAN   pria  75039
+## 356       3218                PANGANDARAN wanita  22603
+## 357       3271                      BOGOR   pria  58413
+## 358       3271                      BOGOR wanita  11479
+## 359       3272                   SUKABUMI   pria  66629
+## 360       3272                   SUKABUMI wanita  31503
+## 361       3273                    BANDUNG   pria  99596
+## 362       3273                    BANDUNG wanita  55498
+## 363       3274                    CIREBON   pria  42484
+## 364       3274                    CIREBON wanita  28811
+## 365       3275                     BEKASI   pria  95118
+## 366       3275                     BEKASI wanita  39703
+## 367       3276                      DEPOK   pria  54663
+## 368       3276                      DEPOK wanita  33804
+## 369       3277                     CIMAHI   pria  85053
+## 370       3277                     CIMAHI wanita  34926
+## 371       3278                TASIKMALAYA   pria 119750
+## 372       3278                TASIKMALAYA wanita  69291
+## 373       3279                     BANJAR   pria 115113
+## 374       3279                     BANJAR wanita  40690
+## 375       3301                    CILACAP   pria 132743
+## 376       3301                    CILACAP wanita  35096
+## 377       3302                   BANYUMAS   pria 108985
+## 378       3302                   BANYUMAS wanita  57872
+## 379       3303                PURBALINGGA   pria 101321
+## 380       3303                PURBALINGGA wanita  69762
+## 381       3304               BANJARNEGARA   pria 111961
+## 382       3304               BANJARNEGARA wanita  75167
+## 383       3305                    KEBUMEN   pria 157985
+## 384       3305                    KEBUMEN wanita  42087
+## 385       3306                  PURWOREJO   pria  70250
+## 386       3306                  PURWOREJO wanita  39204
+## 387       3307                   WONOSOBO   pria 105218
+## 388       3307                   WONOSOBO wanita  47705
+## 389       3308                   MAGELANG   pria 110878
+## 390       3308                   MAGELANG wanita  55613
+## 391       3309                   BOYOLALI   pria 100003
+## 392       3309                   BOYOLALI wanita  51241
+## 393       3310                     KLATEN   pria  46437
+## 394       3310                     KLATEN wanita  53709
+## 395       3311                  SUKOHARJO   pria  54741
+## 396       3311                  SUKOHARJO wanita  32654
+## 397       3312                   WONOGIRI   pria  92119
+## 398       3312                   WONOGIRI wanita  69536
+## 399       3313                KARANGANYAR   pria  91954
+## 400       3313                KARANGANYAR wanita  74465
+## 401       3314                     SRAGEN   pria  72116
+## 402       3314                     SRAGEN wanita  40869
+## 403       3315                   GROBOGAN   pria 148448
+## 404       3315                   GROBOGAN wanita  67606
+## 405       3316                      BLORA   pria  71160
+## 406       3316                      BLORA wanita  44964
+## 407       3317                    REMBANG   pria  92699
+## 408       3317                    REMBANG wanita  46244
+## 409       3318                       PATI   pria 112629
+## 410       3318                       PATI wanita  45351
+## 411       3319                      KUDUS   pria  78421
+## 412       3319                      KUDUS wanita  56392
+## 413       3320                     JEPARA   pria  95687
+## 414       3320                     JEPARA wanita  45694
+## 415       3321                      DEMAK   pria 110180
+## 416       3321                      DEMAK wanita  54595
+## 417       3322                   SEMARANG   pria  62718
+## 418       3322                   SEMARANG wanita  45063
+## 419       3323                 TEMANGGUNG   pria 146548
+## 420       3323                 TEMANGGUNG wanita  67365
+## 421       3324                     KENDAL   pria  93751
+## 422       3324                     KENDAL wanita  32946
+## 423       3325                     BATANG   pria 115367
+## 424       3325                     BATANG wanita  56187
+## 425       3326                 PEKALONGAN   pria 122794
+## 426       3326                 PEKALONGAN wanita  55178
+## 427       3327                   PEMALANG   pria 149434
+## 428       3327                   PEMALANG wanita  44420
+## 429       3328                      TEGAL   pria  78915
+## 430       3328                      TEGAL wanita  47539
+## 431       3329                     BREBES   pria 116781
+## 432       3329                     BREBES wanita  45009
+## 433       3371                   MAGELANG   pria   9641
+## 434       3371                   MAGELANG wanita  10683
+## 435       3372                  SURAKARTA   pria  20240
+## 436       3372                  SURAKARTA wanita  27970
+## 437       3373                   SALATIGA   pria  30574
+## 438       3373                   SALATIGA wanita  15318
+## 439       3374                   SEMARANG   pria  30489
+## 440       3374                   SEMARANG wanita  28622
+## 441       3375                 PEKALONGAN   pria  58340
+## 442       3375                 PEKALONGAN wanita  28991
+## 443       3376                      TEGAL   pria  27678
+## 444       3376                      TEGAL wanita  11575
+## 445       3401                KULON PROGO   pria  41184
+## 446       3401                KULON PROGO wanita  33719
+## 447       3402                     BANTUL   pria  45273
+## 448       3402                     BANTUL wanita  36143
+## 449       3403               GUNUNG KIDUL   pria  59758
+## 450       3403               GUNUNG KIDUL wanita  50486
+## 451       3404                     SLEMAN   pria  21556
+## 452       3404                     SLEMAN wanita  15728
+## 453       3471                 YOGYAKARTA   pria  14421
+## 454       3471                 YOGYAKARTA wanita  19601
+## 455       3501                    PACITAN   pria  89767
+## 456       3501                    PACITAN wanita  56883
+## 457       3502                   PONOROGO   pria  85765
+## 458       3502                   PONOROGO wanita  33359
+## 459       3503                 TRENGGALEK   pria 113956
+## 460       3503                 TRENGGALEK wanita  60098
+## 461       3504                TULUNGAGUNG   pria 102140
+## 462       3504                TULUNGAGUNG wanita  48306
+## 463       3505                     BLITAR   pria  69742
+## 464       3505                     BLITAR wanita  24109
+## 465       3506                     KEDIRI   pria 107390
+## 466       3506                     KEDIRI wanita  24854
+## 467       3507                     MALANG   pria 188073
+## 468       3507                     MALANG wanita  69450
+## 469       3508                   LUMAJANG   pria 169468
+## 470       3508                   LUMAJANG wanita  44261
+## 471       3509                     JEMBER   pria 138257
+## 472       3509                     JEMBER wanita  52723
+## 473       3510                 BANYUWANGI   pria  94083
+## 474       3510                 BANYUWANGI wanita  55394
+## 475       3511                  BONDOWOSO   pria  89407
+## 476       3511                  BONDOWOSO wanita  34329
+## 477       3512                  SITUBONDO   pria  69641
+## 478       3512                  SITUBONDO wanita  32591
+## 479       3513                PROBOLINGGO   pria 169799
+## 480       3513                PROBOLINGGO wanita  52509
+## 481       3514                   PASURUAN   pria 110384
+## 482       3514                   PASURUAN wanita  40661
+## 483       3515                   SIDOARJO   pria  39870
+## 484       3515                   SIDOARJO wanita  31542
+## 485       3516                  MOJOKERTO   pria  63501
+## 486       3516                  MOJOKERTO wanita  40165
+## 487       3517                    JOMBANG   pria  82913
+## 488       3517                    JOMBANG wanita  42912
+## 489       3518                    NGANJUK   pria  83202
+## 490       3518                    NGANJUK wanita  37737
+## 491       3519                     MADIUN   pria  88671
+## 492       3519                     MADIUN wanita  45738
+## 493       3520                    MAGETAN   pria  62469
+## 494       3520                    MAGETAN wanita  35982
+## 495       3521                      NGAWI   pria 103872
+## 496       3521                      NGAWI wanita  44272
+## 497       3522                 BOJONEGORO   pria 111899
+## 498       3522                 BOJONEGORO wanita  46444
+## 499       3523                      TUBAN   pria 140096
+## 500       3523                      TUBAN wanita  44694
+## 501       3524                   LAMONGAN   pria  81532
+## 502       3524                   LAMONGAN wanita  59415
+## 503       3525                     GRESIK   pria  81183
+## 504       3525                     GRESIK wanita  32871
+## 505       3526                  BANGKALAN   pria 120005
+## 506       3526                  BANGKALAN wanita  52254
+## 507       3527                    SAMPANG   pria  90922
+## 508       3527                    SAMPANG wanita  29818
+## 509       3528                  PAMEKASAN   pria  78321
+## 510       3528                  PAMEKASAN wanita  47820
+## 511       3529                    SUMENEP   pria  80750
+## 512       3529                    SUMENEP wanita  74813
+## 513       3571                     KEDIRI   pria  11293
+## 514       3571                     KEDIRI wanita  25644
+## 515       3572                     BLITAR   pria  14830
+## 516       3572                     BLITAR wanita  17476
+## 517       3573                     MALANG   pria  14513
+## 518       3573                     MALANG wanita  12905
+## 519       3574                PROBOLINGGO   pria  41931
+## 520       3574                PROBOLINGGO wanita  26115
+## 521       3575                   PASURUAN   pria  34901
+## 522       3575                   PASURUAN wanita  18366
+## 523       3576                  MOJOKERTO   pria  28643
+## 524       3576                  MOJOKERTO wanita  17119
+## 525       3577                     MADIUN   pria   9757
+## 526       3577                     MADIUN wanita  10960
+## 527       3578                   SURABAYA   pria  34881
+## 528       3578                   SURABAYA wanita  36179
+## 529       3579                       BATU   pria  60924
+## 530       3579                       BATU wanita  33499
+## 531       3601                 PANDEGLANG   pria 178185
+## 532       3601                 PANDEGLANG wanita  49524
+## 533       3602                      LEBAK   pria 175263
+## 534       3602                      LEBAK wanita  42692
+## 535       3603                  TANGERANG   pria 117672
+## 536       3603                  TANGERANG wanita  39549
+## 537       3604                     SERANG   pria 127179
+## 538       3604                     SERANG wanita  31583
+## 539       3671                  TANGERANG   pria  30525
+## 540       3671                  TANGERANG wanita  22151
+## 541       3672                    CILEGON   pria  51244
+## 542       3672                    CILEGON wanita  37820
+## 543       3673                     SERANG   pria  69353
+## 544       3673                     SERANG wanita  41265
+## 545       3674          TANGERANG SELATAN   pria  21976
+## 546       3674          TANGERANG SELATAN wanita  45829
+## 547       5101                   JEMBRANA   pria  21586
+## 548       5101                   JEMBRANA wanita  26035
+## 549       5102                    TABANAN   pria  27445
+## 550       5102                    TABANAN wanita  34973
+## 551       5103                     BADUNG   pria  10597
+## 552       5103                     BADUNG wanita  15795
+## 553       5104                    GIANYAR   pria  22703
+## 554       5104                    GIANYAR wanita  15122
+## 555       5105                  KLUNGKUNG   pria  16714
+## 556       5105                  KLUNGKUNG wanita  21228
+## 557       5106                     BANGLI   pria  28397
+## 558       5106                     BANGLI wanita  20935
+## 559       5107                KARANG ASEM   pria  35171
+## 560       5107                KARANG ASEM wanita  32353
+## 561       5108                   BULELENG   pria  19671
+## 562       5108                   BULELENG wanita  17401
+## 563       5171                   DENPASAR   pria  20198
+## 564       5171                   DENPASAR wanita  20206
+## 565       5201               LOMBOK BARAT   pria  34264
+## 566       5201               LOMBOK BARAT wanita  34522
+## 567       5202              LOMBOK TENGAH   pria  21970
+## 568       5202              LOMBOK TENGAH wanita  28632
+## 569       5203               LOMBOK TIMUR   pria  54637
+## 570       5203               LOMBOK TIMUR wanita  14749
+## 571       5204                    SUMBAWA   pria  31366
+## 572       5204                    SUMBAWA wanita  20634
+## 573       5205                      DOMPU   pria  18225
+## 574       5205                      DOMPU wanita  14288
+## 575       5206                       BIMA   pria  23123
+## 576       5206                       BIMA wanita  10597
+## 577       5207              SUMBAWA BARAT   pria  27950
+## 578       5207              SUMBAWA BARAT wanita  14265
+## 579       5208               LOMBOK UTARA   pria  28038
+## 580       5208               LOMBOK UTARA wanita  24118
+## 581       5271                    MATARAM   pria  14013
+## 582       5271                    MATARAM wanita  12553
+## 583       5272                       BIMA   pria   6905
+## 584       5272                       BIMA wanita   1036
+## 585       5301                SUMBA BARAT   pria  15538
+## 586       5301                SUMBA BARAT wanita   8300
+## 587       5302                SUMBA TIMUR   pria   9575
+## 588       5302                SUMBA TIMUR wanita   3666
+## 589       5303                     KUPANG   pria  17407
+## 590       5303                     KUPANG wanita  10649
+## 591       5304       TIMOR TENGAH SELATAN   pria  20359
+## 592       5304       TIMOR TENGAH SELATAN wanita  14407
+## 593       5305         TIMOR TENGAH UTARA   pria  17449
+## 594       5305         TIMOR TENGAH UTARA wanita  17163
+## 595       5306                       BELU   pria   5727
+## 596       5306                       BELU wanita   1109
+## 597       5307                       ALOR   pria  12645
+## 598       5307                       ALOR wanita   8855
+## 599       5308                    LEMBATA   pria  12780
+## 600       5308                    LEMBATA wanita   6517
+## 601       5309               FLORES TIMUR   pria  15838
+## 602       5309               FLORES TIMUR wanita  19686
+## 603       5310                      SIKKA   pria  11354
+## 604       5310                      SIKKA wanita  10450
+## 605       5311                       ENDE   pria  21474
+## 606       5311                       ENDE wanita  15607
+## 607       5312                      NGADA   pria  24492
+## 608       5312                      NGADA wanita  18587
+## 609       5313                  MANGGARAI   pria  13771
+## 610       5313                  MANGGARAI wanita  13445
+## 611       5314                  ROTE NDAO   pria  22937
+## 612       5314                  ROTE NDAO wanita  14228
+## 613       5315            MANGGARAI BARAT   pria  17834
+## 614       5315            MANGGARAI BARAT wanita  11400
+## 615       5316               SUMBA TENGAH   pria   8205
+## 616       5317           SUMBA BARAT DAYA   pria  16702
+## 617       5317           SUMBA BARAT DAYA wanita   9237
+## 618       5318                    NAGEKEO   pria  10156
+## 619       5318                    NAGEKEO wanita   8275
+## 620       5319            MANGGARAI TIMUR   pria  33663
+## 621       5319            MANGGARAI TIMUR wanita  36077
+## 622       5320                SABU RAIJUA   pria  14745
+## 623       5320                SABU RAIJUA wanita   7250
+## 624       5321                     MALAKA   pria  10127
+## 625       5321                     MALAKA wanita   7471
+## 626       5371                     KUPANG   pria   8199
+## 627       5371                     KUPANG wanita   2549
+## 628       6101                     SAMBAS   pria  31567
+## 629       6101                     SAMBAS wanita  21227
+## 630       6102                 BENGKAYANG   pria  27818
+## 631       6102                 BENGKAYANG wanita  14855
+## 632       6103                     LANDAK   pria  28590
+## 633       6103                     LANDAK wanita  14787
+## 634       6104                  PONTIANAK   pria  32953
+## 635       6104                  PONTIANAK wanita   8034
+## 636       6105                    SANGGAU   pria  39878
+## 637       6105                    SANGGAU wanita  19683
+## 638       6106                   KETAPANG   pria  43361
+## 639       6106                   KETAPANG wanita  16895
+## 640       6107                    SINTANG   pria  36411
+## 641       6107                    SINTANG wanita   9521
+## 642       6108                KAPUAS HULU   pria  25362
+## 643       6108                KAPUAS HULU wanita  26383
+## 644       6109                    SEKADAU   pria  24492
+## 645       6109                    SEKADAU wanita  10683
+## 646       6110                     MELAWI   pria  28312
+## 647       6110                     MELAWI wanita  11090
+## 648       6111               KAYONG UTARA   pria  15058
+## 649       6111               KAYONG UTARA wanita   4191
+## 650       6112                  KUBU RAYA   pria  22892
+## 651       6112                  KUBU RAYA wanita   9954
+## 652       6171                  PONTIANAK   pria   9817
+## 653       6171                  PONTIANAK wanita   3069
+## 654       6172                 SINGKAWANG   pria  18508
+## 655       6172                 SINGKAWANG wanita   7125
+## 656       6201         KOTAWARINGIN BARAT   pria  19687
+## 657       6201         KOTAWARINGIN BARAT wanita   7193
+## 658       6202         KOTAWARINGIN TIMUR   pria  21972
+## 659       6202         KOTAWARINGIN TIMUR wanita   3744
+## 660       6203                     KAPUAS   pria  36241
+## 661       6203                     KAPUAS wanita  12125
+## 662       6204             BARITO SELATAN   pria  15575
+## 663       6204             BARITO SELATAN wanita   2895
+## 664       6205               BARITO UTARA   pria  11180
+## 665       6205               BARITO UTARA wanita   9894
+## 666       6206                   SUKAMARA   pria   9641
+## 667       6206                   SUKAMARA wanita   1564
+## 668       6207                   LAMANDAU   pria  19446
+## 669       6207                   LAMANDAU wanita   5941
+## 670       6208                    SERUYAN   pria  24824
+## 671       6208                    SERUYAN wanita  10596
+## 672       6209                   KATINGAN   pria  27869
+## 673       6209                   KATINGAN wanita  12645
+## 674       6210               PULANG PISAU   pria  21166
+## 675       6210               PULANG PISAU wanita   8663
+## 676       6211                 GUNUNG MAS   pria  20497
+## 677       6211                 GUNUNG MAS wanita   6490
+## 678       6212               BARITO TIMUR   pria   9192
+## 679       6212               BARITO TIMUR wanita   4511
+## 680       6213                MURUNG RAYA   pria   9258
+## 681       6213                MURUNG RAYA wanita   4642
+## 682       6271              PALANGKA RAYA   pria   7778
+## 683       6271              PALANGKA RAYA wanita   3859
+## 684       6301                 TANAH LAUT   pria  26054
+## 685       6301                 TANAH LAUT wanita   7106
+## 686       6302                  KOTA BARU   pria  27661
+## 687       6302                  KOTA BARU wanita   7444
+## 688       6303                     BANJAR   pria  29783
+## 689       6303                     BANJAR wanita  14328
+## 690       6304               BARITO KUALA   pria  15219
+## 691       6304               BARITO KUALA wanita  13576
+## 692       6305                      TAPIN   pria  23464
+## 693       6305                      TAPIN wanita  10681
+## 694       6306        HULU SUNGAI SELATAN   pria  33200
+## 695       6306        HULU SUNGAI SELATAN wanita  15857
+## 696       6307         HULU SUNGAI TENGAH   pria  29902
+## 697       6307         HULU SUNGAI TENGAH wanita  14258
+## 698       6308          HULU SUNGAI UTARA   pria  25425
+## 699       6308          HULU SUNGAI UTARA wanita  12240
+## 700       6309                   TABALONG   pria  23492
+## 701       6309                   TABALONG wanita  18950
+## 702       6310                TANAH BUMBU   pria  29062
+## 703       6310                TANAH BUMBU wanita  10570
+## 704       6311                   BALANGAN   pria  14002
+## 705       6311                   BALANGAN wanita  10425
+## 706       6371                BANJARMASIN   pria  33243
+## 707       6371                BANJARMASIN wanita   9957
+## 708       6372                BANJAR BARU   pria  25867
+## 709       6372                BANJAR BARU wanita   5343
+## 710       6401                      PASER   pria  30517
+## 711       6401                      PASER wanita   6469
+## 712       6402                KUTAI BARAT   pria  19055
+## 713       6402                KUTAI BARAT wanita   9952
+## 714       6403          KUTAI KARTANEGARA   pria  40997
+## 715       6403          KUTAI KARTANEGARA wanita   7693
+## 716       6404                KUTAI TIMUR   pria  26339
+## 717       6404                KUTAI TIMUR wanita   4678
+## 718       6405                      BERAU   pria  15064
+## 719       6405                      BERAU wanita   3255
+## 720       6409        PENAJAM PASER UTARA   pria  15701
+## 721       6409        PENAJAM PASER UTARA wanita   5127
+## 722       6411               MAHAKAM HULU   pria   8230
+## 723       6471                 BALIKPAPAN   pria  22159
+## 724       6471                 BALIKPAPAN wanita   6209
+## 725       6472                  SAMARINDA   pria  27461
+## 726       6472                  SAMARINDA wanita  20235
+## 727       6474                    BONTANG   pria   9704
+## 728       6474                    BONTANG wanita   7457
+## 729       6501                    MALINAU   pria   8903
+## 730       6501                    MALINAU wanita   3141
+## 731       6502                   BULUNGAN   pria  20592
+## 732       6502                   BULUNGAN wanita   1674
+## 733       6503                TANA TIDUNG   pria   3903
+## 734       6503                TANA TIDUNG wanita   1230
+## 735       6504                    NUNUKAN   pria   4807
+## 736       6504                    NUNUKAN wanita   1083
+## 737       6571                    TARAKAN   pria  11697
+## 738       6571                    TARAKAN wanita   4513
+## 739       7101          BOLAANG MONGONDOW   pria  13996
+## 740       7101          BOLAANG MONGONDOW wanita   6024
+## 741       7102                   MINAHASA   pria  12153
+## 742       7102                   MINAHASA wanita   4272
+## 743       7103          KEPULAUAN SANGIHE   pria   7281
+## 744       7103          KEPULAUAN SANGIHE wanita   2291
+## 745       7104           KEPULAUAN TALAUD   pria   8782
+## 746       7104           KEPULAUAN TALAUD wanita   3065
+## 747       7105           MINAHASA SELATAN   pria  15266
+## 748       7105           MINAHASA SELATAN wanita   3341
+## 749       7106             MINAHASA UTARA   pria   6653
+## 750       7106             MINAHASA UTARA wanita   1096
+## 751       7107    BOLAANG MONGONDOW UTARA   pria  12875
+## 752       7107    BOLAANG MONGONDOW UTARA wanita   1912
+## 753       7108     SIAU TAGULANDANG BIARO   pria  15509
+## 754       7108     SIAU TAGULANDANG BIARO wanita   2847
+## 755       7109          MINAHASA TENGGARA   pria  11471
+## 756       7109          MINAHASA TENGGARA wanita   2420
+## 757       7110  BOLAANG MONGONDOW SELATAN   pria  12317
+## 758       7110  BOLAANG MONGONDOW SELATAN wanita   1951
+## 759       7111    BOLAANG MONGONDOW TIMUR   pria  12683
+## 760       7111    BOLAANG MONGONDOW TIMUR wanita   5921
+## 761       7171                     MANADO   pria  20063
+## 762       7171                     MANADO wanita   5793
+## 763       7172                     BITUNG   pria   8492
+## 764       7172                     BITUNG wanita   2427
+## 765       7173                    TOMOHON   pria   8510
+## 766       7173                    TOMOHON wanita   4230
+## 767       7174                 KOTAMOBAGU   pria   8685
+## 768       7174                 KOTAMOBAGU wanita   3109
+## 769       7201          BANGGAI KEPULAUAN   pria   8328
+## 770       7201          BANGGAI KEPULAUAN wanita   9565
+## 771       7202                    BANGGAI   pria  26936
+## 772       7202                    BANGGAI wanita   6021
+## 773       7203                   MOROWALI   pria   8738
+## 774       7203                   MOROWALI wanita   3882
+## 775       7204                       POSO   pria  25358
+## 776       7204                       POSO wanita  13389
+## 777       7205                   DONGGALA   pria  21358
+## 778       7205                   DONGGALA wanita  10036
+## 779       7206                  TOLI-TOLI   pria  27853
+## 780       7206                  TOLI-TOLI wanita   3151
+## 781       7207                       BUOL   pria  17612
+## 782       7207                       BUOL wanita   4518
+## 783       7208             PARIGI MOUTONG   pria  35159
+## 784       7208             PARIGI MOUTONG wanita  12042
+## 785       7209               TOJO UNA-UNA   pria  16529
+## 786       7209               TOJO UNA-UNA wanita  14191
+## 787       7210                       SIGI   pria  25053
+## 788       7210                       SIGI wanita   3945
+## 789       7211               BANGGAI LAUT   pria  11000
+## 790       7211               BANGGAI LAUT wanita   2450
+## 791       7212             MOROWALI UTARA   pria  10229
+## 792       7212             MOROWALI UTARA wanita   9830
+## 793       7271                       PALU   pria  22968
+## 794       7271                       PALU wanita   8225
+## 795       7301          KEPULAUAN SELAYAR   pria   9728
+## 796       7301          KEPULAUAN SELAYAR wanita  14111
+## 797       7302                  BULUKUMBA   pria  20910
+## 798       7302                  BULUKUMBA wanita   8074
+## 799       7303                   BANTAENG   pria  17502
+## 800       7303                   BANTAENG wanita   2793
+## 801       7304                  JENEPONTO   pria  17268
+## 802       7304                  JENEPONTO wanita   9059
+## 803       7305                    TAKALAR   pria  21308
+## 804       7305                    TAKALAR wanita  15664
+## 805       7306                       GOWA   pria  16945
+## 806       7306                       GOWA wanita  10770
+## 807       7307                     SINJAI   pria  26465
+## 808       7307                     SINJAI wanita   4960
+## 809       7308                      MAROS   pria  26922
+## 810       7308                      MAROS wanita  14950
+## 811       7309   PANGKAJENE DAN KEPULAUAN   pria  35197
+## 812       7309   PANGKAJENE DAN KEPULAUAN wanita   5339
+## 813       7310                      BARRU   pria  26316
+## 814       7310                      BARRU wanita   8118
+## 815       7311                       BONE   pria  38190
+## 816       7311                       BONE wanita  11577
+## 817       7312                    SOPPENG   pria  23693
+## 818       7312                    SOPPENG wanita  10222
+## 819       7313                       WAJO   pria  44309
+## 820       7313                       WAJO wanita  15228
+## 821       7314          SIDENRENG RAPPANG   pria  29254
+## 822       7314          SIDENRENG RAPPANG wanita  11929
+## 823       7315                    PINRANG   pria  20527
+## 824       7315                    PINRANG wanita   5432
+## 825       7316                   ENREKANG   pria  11570
+## 826       7316                   ENREKANG wanita   5440
+## 827       7317                       LUWU   pria  17195
+## 828       7317                       LUWU wanita   1026
+## 829       7318                TANA TORAJA   pria  16739
+## 830       7318                TANA TORAJA wanita  10144
+## 831       7322                 LUWU UTARA   pria  26716
+## 832       7322                 LUWU UTARA wanita   7735
+## 833       7325                 LUWU TIMUR   pria  19098
+## 834       7325                 LUWU TIMUR wanita   7559
+## 835       7326               TORAJA UTARA   pria  17496
+## 836       7326               TORAJA UTARA wanita   6411
+## 837       7371                   MAKASSAR   pria  14824
+## 838       7371                   MAKASSAR wanita   7779
+## 839       7372                   PAREPARE   pria  10848
+## 840       7372                   PAREPARE wanita   2354
+## 841       7373                     PALOPO   pria  13591
+## 842       7373                     PALOPO wanita  10070
+## 843       7401                      BUTON   pria   3879
+## 844       7401                      BUTON wanita   6470
+## 845       7402                       MUNA   pria   7333
+## 846       7402                       MUNA wanita   4241
+## 847       7403                     KONAWE   pria   2694
+## 848       7403                     KONAWE wanita   3062
+## 849       7404                     KOLAKA   pria   9176
+## 850       7404                     KOLAKA wanita   4236
+## 851       7405             KONAWE SELATAN   pria  20528
+## 852       7405             KONAWE SELATAN wanita   4485
+## 853       7406                    BOMBANA   pria  12604
+## 854       7406                    BOMBANA wanita   3787
+## 855       7407                   WAKATOBI   pria   9096
+## 856       7407                   WAKATOBI wanita   6565
+## 857       7408               KOLAKA UTARA   pria  21428
+## 858       7408               KOLAKA UTARA wanita   5565
+## 859       7409                BUTON UTARA   pria   8649
+## 860       7409                BUTON UTARA wanita   2793
+## 861       7410               KONAWE UTARA   pria  11572
+## 862       7410               KONAWE UTARA wanita   4525
+## 863       7411               KOLAKA TIMUR   pria  10830
+## 864       7411               KOLAKA TIMUR wanita   4612
+## 865       7412           KONAWE KEPULAUAN   pria   1776
+## 866       7471                    KENDARI   pria   1052
+## 867       7471                    KENDARI wanita   2901
+## 868       7472                     BAUBAU   pria   7755
+## 869       7472                     BAUBAU wanita   4864
+## 870       7501                    BOALEMO   pria  10939
+## 871       7501                    BOALEMO wanita   5801
+## 872       7502                  GORONTALO   pria  25708
+## 873       7502                  GORONTALO wanita   8400
+## 874       7503                   POHUWATO   pria  12346
+## 875       7503                   POHUWATO wanita   9304
+## 876       7504               BONE BOLANGO   pria  19160
+## 877       7504               BONE BOLANGO wanita   4970
+## 878       7505            GORONTALO UTARA   pria  17078
+## 879       7505            GORONTALO UTARA wanita   9058
+## 880       7571                  GORONTALO   pria  11606
+## 881       7571                  GORONTALO wanita   4135
+## 882       7601                     MAJENE   pria  16391
+## 883       7601                     MAJENE wanita   8676
+## 884       7602            POLEWALI MANDAR   pria  27134
+## 885       7602            POLEWALI MANDAR wanita  15262
+## 886       7603                     MAMASA   pria  16448
+## 887       7603                     MAMASA wanita   4235
+## 888       7604                     MAMUJU   pria  17723
+## 889       7604                     MAMUJU wanita   2957
+## 890       7605               MAMUJU UTARA   pria  13399
+## 891       7605               MAMUJU UTARA wanita   4321
+## 892       7606              MAMUJU TENGAH   pria   8308
+## 893       7606              MAMUJU TENGAH wanita   1218
+## 894       8101      MALUKU TENGGARA BARAT   pria   7230
+## 895       8101      MALUKU TENGGARA BARAT wanita   7158
+## 896       8102            MALUKU TENGGARA   pria   7899
+## 897       8102            MALUKU TENGGARA wanita   4623
+## 898       8103              MALUKU TENGAH   pria  11907
+## 899       8103              MALUKU TENGAH wanita   6488
+## 900       8104                       BURU   pria  10704
+## 901       8104                       BURU wanita   8028
+## 902       8105              KEPULAUAN ARU   pria   8728
+## 903       8105              KEPULAUAN ARU wanita   5777
+## 904       8106         SERAM BAGIAN BARAT   pria   6918
+## 905       8106         SERAM BAGIAN BARAT wanita   1718
+## 906       8107         SERAM BAGIAN TIMUR   pria  12026
+## 907       8107         SERAM BAGIAN TIMUR wanita   7098
+## 908       8108          MALUKU BARAT DAYA   pria   9135
+## 909       8108          MALUKU BARAT DAYA wanita   2897
+## 910       8109               BURU SELATAN   pria   5204
+## 911       8109               BURU SELATAN wanita    855
+## 912       8171                      AMBON   pria   3015
+## 913       8171                      AMBON wanita   1379
+## 914       8172                       TUAL   pria   3229
+## 915       8172                       TUAL wanita   2956
+## 916       8201            HALMAHERA BARAT   pria   8887
+## 917       8201            HALMAHERA BARAT wanita   5247
+## 918       8202           HALMAHERA TENGAH   pria   4296
+## 919       8202           HALMAHERA TENGAH wanita    499
+## 920       8203             KEPULAUAN SULA   pria   9064
+## 921       8203             KEPULAUAN SULA wanita   1998
+## 922       8204          HALMAHERA SELATAN   pria  10922
+## 923       8204          HALMAHERA SELATAN wanita   6168
+## 924       8205            HALMAHERA UTARA   pria   8998
+## 925       8205            HALMAHERA UTARA wanita   3832
+## 926       8206            HALMAHERA TIMUR   pria  11289
+## 927       8206            HALMAHERA TIMUR wanita   5382
+## 928       8207              PULAU MOROTAI   pria   6722
+## 929       8207              PULAU MOROTAI wanita   3762
+## 930       8208              PULAU TALIABU   pria   3121
+## 931       8208              PULAU TALIABU wanita    432
+## 932       8271                    TERNATE   pria   5372
+## 933       8271                    TERNATE wanita   1355
+## 934       8272           TIDORE KEPULAUAN   pria  10549
+## 935       8272           TIDORE KEPULAUAN wanita   2985
+## 936       9101                     FAKFAK   pria   3746
+## 937       9101                     FAKFAK wanita   1717
+## 938       9102                    KAIMANA   pria   3092
+## 939       9102                    KAIMANA wanita   2080
+## 940       9103              TELUK WONDAMA   pria   6545
+## 941       9103              TELUK WONDAMA wanita   4234
+## 942       9104              TELUK BINTUNI   pria   8292
+## 943       9104              TELUK BINTUNI wanita   1290
+## 944       9105                  MANOKWARI   pria    877
+## 945       9105                  MANOKWARI wanita    775
+## 946       9106             SORONG SELATAN   pria   5316
+## 947       9106             SORONG SELATAN wanita   2114
+## 948       9107                     SORONG   pria   6287
+## 949       9107                     SORONG wanita   1752
+## 950       9108                 RAJA AMPAT   pria   5100
+## 951       9108                 RAJA AMPAT wanita    743
+## 952       9109                   TAMBRAUW   pria   3323
+## 953       9109                   TAMBRAUW wanita    583
+## 954       9110                    MAYBRAT   pria   2178
+## 955       9110                    MAYBRAT wanita   2664
+## 956       9111          MANOKWARI SELATAN   pria    954
+## 957       9111          MANOKWARI SELATAN wanita    305
+## 958       9112           PEGUNUNGAN ARFAK   pria   2702
+## 959       9112           PEGUNUNGAN ARFAK wanita    772
+## 960       9171                     SORONG   pria   3683
+## 961       9171                     SORONG wanita    757
+## 962       9401                    MERAUKE   pria  10361
+## 963       9401                    MERAUKE wanita   4319
+## 964       9402                 JAYAWIJAYA   pria   4792
+## 965       9402                 JAYAWIJAYA wanita   3550
+## 966       9403                   JAYAPURA   pria   5495
+## 967       9403                   JAYAPURA wanita   2049
+## 968       9404                     NABIRE   pria   7914
+## 969       9404                     NABIRE wanita   3331
+## 970       9408            KEPULAUAN YAPEN   pria   5093
+## 971       9408            KEPULAUAN YAPEN wanita   3195
+## 972       9409                BIAK NUMFOR   pria   3541
+## 973       9409                BIAK NUMFOR wanita   2951
+## 974       9410                     PANIAI   pria   6848
+## 975       9410                     PANIAI wanita   4333
+## 976       9411                PUNCAK JAYA   pria   1970
+## 977       9411                PUNCAK JAYA wanita   1893
+## 978       9412                     MIMIKA   pria  12570
+## 979       9412                     MIMIKA wanita   2070
+## 980       9413               BOVEN DIGOEL   pria   7889
+## 981       9414                      MAPPI   pria   7400
+## 982       9414                      MAPPI wanita   1628
+## 983       9415                      ASMAT   pria  16893
+## 984       9415                      ASMAT wanita  10420
+## 985       9416                   YAHUKIMO   pria  14942
+## 986       9416                   YAHUKIMO wanita   4255
+## 987       9417         PEGUNUNGAN BINTANG   pria   3242
+## 988       9417         PEGUNUNGAN BINTANG wanita   4906
+## 989       9418                   TOLIKARA   pria   1928
+## 990       9418                   TOLIKARA wanita    365
+## 991       9419                      SARMI   pria   5659
+## 992       9419                      SARMI wanita   1542
+## 993       9420                     KEEROM   pria   5104
+## 994       9420                     KEEROM wanita   1034
+## 995       9426                    WAROPEN   pria   1966
+## 996       9427                    SUPIORI   pria   2872
+## 997       9428             MAMBERAMO RAYA   pria   3481
+## 998       9429                      NDUGA   pria   1930
+## 999       9429                      NDUGA wanita   2204
+## 1000      9430                 LANNY JAYA   pria   1427
+## 1001      9430                 LANNY JAYA wanita    349
+## 1002      9431           MAMBERAMO TENGAH   pria   4183
+## 1003      9431           MAMBERAMO TENGAH wanita   2261
+## 1004      9432                     YALIMO   pria   5643
+## 1005      9432                     YALIMO wanita    730
+## 1006      9433                     PUNCAK   pria   1275
+## 1007      9433                     PUNCAK wanita   1026
+## 1008      9434                    DOGIYAI   pria   2976
+## 1009      9434                    DOGIYAI wanita   2138
+## 1010      9435                 INTAN JAYA   pria   2882
+## 1011      9436                     DEIYAI   pria   2880
+## 1012      9436                     DEIYAI wanita   4575
+## 1013      9471                   JAYAPURA   pria   1348
+## 1014      9471                   JAYAPURA wanita    830
+```
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# Mengubah bentuk data
+
+- Pivot longer or pivot wider
+- Apabila kita ingin menjadikan pria dan wanita menjadi kolom sendiri-sendiri, maka harus pivot wider
+
+
+```r
+lulusan_sd_wider &lt;- lulusan_sd_joined %&gt;%
+  pivot_wider( names_from = "jk", values_from = "jumlah")
+
+lulusan_sd_wider
+```
+
+```
+## # A tibble: 511 × 4
+##    KODE_KABB NAMA_KAB       pria wanita
+##    &lt;fct&gt;     &lt;fct&gt;         &lt;int&gt;  &lt;int&gt;
+##  1 1101      SIMEULUE      13103    464
+##  2 1102      ACEH SINGKIL   7178   3523
+##  3 1103      ACEH SELATAN  20553   2385
+##  4 1104      ACEH TENGGARA  5146   8222
+##  5 1105      ACEH TIMUR    19375   9536
+##  6 1106      ACEH TENGAH    7555   8419
+##  7 1107      ACEH BARAT     8715   4799
+##  8 1108      ACEH BESAR    20196   3009
+##  9 1109      PIDIE          9608   8920
+## 10 1110      BIREUEN       19113   6156
+## # … with 501 more rows
+```
+
+- Apabila kita ingin mengembalikan seperti semula
+
+```r
+lulusan_sd_longer &lt;- lulusan_sd_wider %&gt;%
+  pivot_longer(c(-KODE_KABB, -NAMA_KAB),
+               names_to = "jk",
+               values_to = "jumlah")
+
+lulusan_sd_longer
+```
+
+```
+## # A tibble: 1,022 × 4
+##    KODE_KABB NAMA_KAB      jk     jumlah
+##    &lt;fct&gt;     &lt;fct&gt;         &lt;chr&gt;   &lt;int&gt;
+##  1 1101      SIMEULUE      pria    13103
+##  2 1101      SIMEULUE      wanita    464
+##  3 1102      ACEH SINGKIL  pria     7178
+##  4 1102      ACEH SINGKIL  wanita   3523
+##  5 1103      ACEH SELATAN  pria    20553
+##  6 1103      ACEH SELATAN  wanita   2385
+##  7 1104      ACEH TENGGARA pria     5146
+##  8 1104      ACEH TENGGARA wanita   8222
+##  9 1105      ACEH TIMUR    pria    19375
+## 10 1105      ACEH TIMUR    wanita   9536
+## # … with 1,012 more rows
+```
+
+---
+class: left, middle
+
+background-image:url(images/tks.png)
+background-size: cover
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"navigation": {
+"scroll": false
+},
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

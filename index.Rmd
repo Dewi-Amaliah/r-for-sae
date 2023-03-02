@@ -1,0 +1,503 @@
+---
+title: "Presentation Ninja"
+subtitle: "&#x2694;&#xFE0F; xaringan +<br/>&#x1F60E; xaringanthemer"  
+author: 
+  - "Dewi Amaliah"
+date: '`r Sys.Date()`'
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    seal: false
+    css: ["xaringan-themer.css", "scrollable.css"]
+    nature:
+      navigation:
+        scroll: false
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+
+library(knitr)
+opts_chunk$set(echo = TRUE, 
+               warning = FALSE, 
+               message = FALSE,
+               cache = FALSE, 
+               cache.path = "cache/",
+               fig.retina = 3)
+library(fontawesome)
+library(tidyverse)
+library(xaringanExtra)
+library(patchwork)
+```
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_duo_accent(
+  primary_color = "#1381B0",
+  secondary_color = "#FF961C",
+  inverse_header_color = "#FFFFFF"
+)
+```
+
+class: left, middle
+
+background-image:url(images/cover2.png)
+background-size: cover
+
+---
+class: left, middle
+
+background-image:url(images/outline.png)
+background-size: cover
+---
+class: left
+
+background-image:url(images/bg2.png)
+background-size: cover
+
+# Install R dan R-Studio
+
+R dan R studio dapat diinstall dengan melihat panduan berikut:
+
+https://posit.co/download/rstudio-desktop/
+
+```{r, echo=FALSE, fig.align='center', out.width="20%"}
+include_graphics("images/frame.png")
+```
+
+---
+class: left
+
+background-image:url(images/bg2.png)
+background-size: cover
+
+# Membuat R-Project
+
+- Semacam tempat untuk menyimpan semua file yang terkait dengan project kita.
+- Sebaiknya memiliki R-project untuk setiap pekerjaan yang berbeda.
+- Berguna untuk *reproducibility* dan lebih terorganisir.
+
+```{r, echo=FALSE,out.width="40%",out.height="20%",fig.cap="Membuat R-Project",fig.show='hold',fig.align='center'}
+knitr::include_graphics(c("images/pict1.png","images/pict2.png"))
+``` 
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# Loading Package 
+
+- Package adalah kumpulan fungsi yang digunakan untuk melakukan tugas tertentu. 
+- Package ini harus dipanggil/di-load terlebih dahulu agar dapat digunakan. 
+- Penginstall-an hanya dilakukan sekali namun harus selalu di-load untuk setiap session 
+
+```{r, echo = FALSE}
+use_panelset()
+```
+
+.panelset[
+.panel[.panel-name[📦 Belum ter-install]
+
+```{r, eval = FALSE}
+# install package terlebih dahulu
+install.packages("foreign")
+install.packages("tidyverse")
+```
+
+
+```{r}
+# load package
+library(foreign)
+library(tidyverse)
+```
+
+
+]
+.panel[.panel-name[📦 Sudah ter-install]
+
+```{r echo = TRUE}
+# Package bisa langsung di load 
+library(foreign)
+library(tidyverse)
+```
+]
+]
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# Pengenalan Object pada R
+
+- Segala sesuatu yang kita buat di R bisa disebut dengan object.
+- Objek-objek yang ada di R, antara lain `Vector`, `Matrix`, `Array`, `Factor`, `List`, dan `Data Frame`.
+- Pembuatan object di R dapat digunakan melalui assignment dengan symbol `<-` atau `=`. 
+- Penamaan object:
+  - Diawali dengan huruf (A-Z atau a-z) atau titik (.).
+  - Tidak menggunakan spasi ataupun karakter spesial (!, @, #).
+  - Tidak menggunakan atau menghindari kata yang sudah digunakan oleh R (NULL, TRUE, FALSE, q, c, t)
+
+
+.panelset[
+.panel[.panel-name[📦 Assign Object]
+
+```{r}
+x <- 1 + 2
+x
+
+y = "Hello World!"
+y
+```
+
+
+]
+.panel[.panel-name[📦 Akses Object]
+
+```{r}
+z <- c("apel", "mangga", "duren")
+z[2]
+z[3]
+```
+
+]
+]
+
+---
+
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# Membaca Data
+
+- Pada contoh ini data yang akan dibaca adalah data Survei Angkatan Kerja Nasional Tahun 2016 (SAKERNAS).
+- Function untuk membaca data ada bermacam-macam tergantung tipe data.
+
+```{r}
+# package yang dugunakan untuk membaca format data SAKERNAS, yaitu dbf
+library(foreign)
+
+# membaca data, disimpan di dalam objek bernama sak
+sak <- read.dbf(here::here("data/Sakernas 2016 pakai.dbf"))
+glimpse(sak)
+```
+
+---
+class: left
+
+background-image:url(images/bg2.png)
+background-size: cover
+
+# Merapikan Data
+
+- Sebelum bisa dimodelkan, (hampir selalu) kita harus merapikan data karena terkadang formatnya tidak sesuai yang kita inginkan. 
+- Beberapa langkah merapikan data adalah:
+  - Memilih (select) variabel
+  - Mengubah nama (rename) data
+  - Memfilter observasi
+  - Mengubah tipe data 
+  - Mengubah level pada data
+  - Grouping dan summarise data
+  - Perubahan bentuk data
+  - Join data
+  
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# Memilih Variabel
+
+- Pemilihan variabel dapat digunakan dengan menggunakan fungsi `select`.
+- Tanda `%>%` adalah "pipe" artinya semacam "next".
+
+```{r}
+# misalnya dalam hal ini kita ingin memilih variabel tahun (TAHUN), penimbang (FINAL_WEIG), provinsi (PROP), kode_kab (KODE_KABB), kode_kec (KODE_KEC), kode_desa (KODE_DESA), klasifikasi desa kota (KLASIFIKAS), jenis kelamin (B4_K4), umur (B4_K6), status sekolah (B4_K8), pendidikan terakhir (B5_R1A), status perkawinan (B4_K7), status bekerja (B5_R5A1), kegiatan paling banyak (B5_R5B), dan apakah memiliki pekerjaan tambahan atau tidak (B5_R34)
+
+sak_select <- sak %>%
+  select(TAHUN, FINAL_WEIG, PROP, KODE_KABB, KODE_KEC,
+         KODE_DESA, KLASIFIKAS, B4_K4, B4_K6, B4_K8, B5_R1A,
+         B4_K7, B5_R5A1, B5_R5B, B5_R34)
+
+glimpse(sak_select)
+```
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# Mengubah nama variabel
+
+- Nama variabel masih dalam bentuk rincian kuesioner. 
+- Tidak dapat diketahui maknanya tanpa mengacu pada *data dictionary* atau kuesioner.
+- Mengubah nama variabel dapat digunakan dengan menggunakan fungsi `rename`.
+
+```{r}
+sak_renamed <- sak_select %>%
+  rename(tahun = TAHUN,
+         penimbang = FINAL_WEIG,
+         kotadesa = KLASIFIKAS,
+         kode_prov = PROP,
+         kode_kab = KODE_KABB,
+         kode_kec = KODE_KEC,
+         kode_desa = KODE_DESA,
+         jk = B4_K4,
+         umur = B4_K6,
+         sekolah = B4_K8,
+         ijazah = B5_R1A,
+         kawin = B4_K7,
+         bekerja = B5_R5A1,
+         kegiatan = B5_R5B,
+         kerja_tambahan = B5_R34)
+
+glimpse(sak_renamed)
+```
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# Filter observasi
+
+Contoh kasus:
+
+- Kita ingin memfilter observasi/responden yang statusnya benar-benar bekerja 
+- Variabel `bekerja` berkode 1 dan variabel `kegiatan` berkode 1
+- Hal ini dapat dilakukan dengan *filtering* observasi yang dapat dilakukan dengan fungsi `filter()`
+
+```{r}
+sak_bekerja <- sak_renamed %>%
+  filter(bekerja == 1 & kegiatan == 1)
+
+nrow(sak_bekerja)
+```
+
+
+```{r echo=FALSE}
+sample <- nrow(sak_renamed)
+sample_bekerja <- nrow(sak_bekerja)
+```
+
+Sebanyak `r sample_bekerja` orang dari `r sample` keseluruhan sampel SAKERNAS berstatus **bekerja**
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# Mengubah tipe data
+
+- Terdapat beberapa tipe data: **numeric**, **character**, **integer**, **factor**, **date**, **logical**
+- Tipe data harus benar karena fungsi-fungsi pada `R` hanya akan berjalan apabila tipe datanya benar
+
+.panelset[
+.panel[.panel-name[📦 Data]
+
+```{r}
+glimpse(sak_bekerja)
+```
+]
+
+.panel[.panel-name[📦 Mengubah tipe data (satu persatu)]
+
+- "Membuat" variabel baru dengan nama yang sama dengan fungsi `mutate`
+- Lalu meng-*assign* tipe variabel yang baru 
+- Hampir semua variabel tidak sesuai data typenya 
+
+```{r}
+# yang tidak perlu diubah tipenya hanya umur dan penimbang
+
+sak_dattype <- sak_bekerja %>%
+  mutate(kode_prov = as.factor(kode_prov),
+         kode_kab = as.factor(kode_kab),
+         kode_kec = as.factor(kode_kec),
+         kode_desa = as.factor(kode_desa),
+         kotadesa = as.factor(kotadesa),
+         jk = as.factor(jk),
+         sekolah = as.factor(sekolah),
+         ijazah = as.factor(ijazah),
+         kawin = as.factor(kawin),
+         bekerja = as.factor(bekerja),
+         kegiatan = as.factor(kegiatan),
+         kerja_tambahan = as.factor(kerja_tambahan)
+         )
+```
+]
+
+.panel[.panel-name[📦 Mengubah tipe data (sekaligus)]
+
+- Cara sebelumnya cukup "repot" karena mengubah variable harus dilakukan satu per satu
+- Menggunakan function untuk mengubah sekaligus
+
+```{r, warning=FALSE, message=FALSE}
+# membuat function untuk mengubah tipe data
+factorize <- function(x){
+  factor(x)
+}
+
+# memilih nama variabel yg akan diubah tipe datanya
+select_var <- sak_bekerja %>%
+  select(-umur, -penimbang, -tahun) %>%
+  names()
+
+# mengubah tipe data
+sak_dattype_v2 <- sak_bekerja %>%
+  mutate_at(vars(select_var), factorize)
+
+glimpse(sak_dattype_v2)
+```
+]
+]
+
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# Mengubah level pada data
+
+- Data masih berupa kode (1, 2, 3, dst)
+- Perlu diganti (recode) agar lebih mudah diinterpretasikan
+
+```{r}
+sak_leveled <- sak_dattype_v2 %>%
+  mutate(jk = recode_factor(jk, `1` = "pria",
+                             `2` = "wanita"),
+         kawin = recode_factor(kawin, `1` = "belum kawin",
+                                  `2` = "kawin",
+                                  `3` = "cerai hidup",
+                                  `4` = "cerai mati"),
+         sekolah = recode_factor(sekolah, `1` = "never",
+                                `2` = "at school",
+                                `3` = "graduated"),
+         ijazah = recode_factor(ijazah, `1` = "tidak punya",
+                                `2` = "Paket A",
+                                `3` = "SDLB",
+                                `4` = "SD/MI",
+                                `5` = "Paket B",
+                                `6` = "SMPLB",
+                                `7` = "SMP/MTs",
+                                `8` = "Paket C",
+                                `9` = "SMLB",
+                                `10` = "SMA/MA",
+                                `11` = "SMK/MAK",
+                                `12` = "Diploma I/II",
+                                `13` = "Diploma III",
+                                `14` = "Diploma IV/S1",
+                                `15` = "S2",
+                                `16` = "S3"),
+         bekerja = recode_factor(bekerja, `1` = "ya",
+                              `2` = "tidak"),
+         kegiatan = recode_factor(kegiatan, `1` = "ya",
+                                    `2` = "tidak"),
+         kerja_tambahan = recode_factor(kerja_tambahan, `1` = "ya",
+                                         `2` = "tidak")) %>%
+  mutate(ijazah = fct_collapse(ijazah, `SD setara` = c("Paket A", "SDLB", "SD/MI"),
+                               `SMP setara` = c("Paket B", "SMPLB", "SMP/MTs"),
+                               `SMA setara` = c("Paket C", "SMLB", "SMA/MA", "SMK/MAK"),
+                               `Diploma` = c("Diploma I/II", "Diploma III")))
+```
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# *Grouping* dan *Summarise* data
+
+- Misalnya kita ingin melakukan agregasi data dari level individu -> kabupaten 
+- Dapat dilakukan dengan *grouping* dan *summarise*
+- Contoh kasus: mengetahui jumlah lulusan SD di seluruh kabupaten di Indonesia berdasarkan jenis kelamin
+- Perlu memperhatikan variabel penimbang
+
+```{r}
+
+lulusan_sd <- sak_leveled %>%
+  #filter lulusan SD terlebih dahulu
+  filter(ijazah == "SD setara") %>%
+  # group berdasarkan jenis kelamin dan kabupaten 
+  group_by(kode_kab, jk) %>%
+  summarise(jumlah = sum(penimbang, na.rm = TRUE)) %>%
+  ungroup()
+
+lulusan_sd
+```
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+
+# *Joining* data
+
+- Pada saat grouping by kabupaten, hanya ada kode kabupaten
+- Diperlukan nama kabupaten kota dengan melakukan join dengan tabel lain
+
+```{r}
+kode_kab <- sak %>%
+  select(KODE_KABB, NAMA_KAB) %>%
+  #dibutuhkan tipe data yang sama untuk join 
+  mutate(KODE_KABB = as.factor(KODE_KABB)) %>%
+  distinct(.keep_all = TRUE)
+
+lulusan_sd_joined <- left_join(kode_kab, lulusan_sd, by = c("KODE_KABB" = "kode_kab"))
+
+lulusan_sd_joined
+```
+
+---
+class: left
+
+background-image:url(images/bg3.png)
+background-size: cover
+
+# Mengubah bentuk data
+
+- Pivot longer or pivot wider
+- Apabila kita ingin menjadikan pria dan wanita menjadi kolom sendiri-sendiri, maka harus pivot wider
+
+```{r}
+lulusan_sd_wider <- lulusan_sd_joined %>%
+  pivot_wider( names_from = "jk", values_from = "jumlah")
+
+lulusan_sd_wider
+```
+
+- Apabila kita ingin mengembalikan seperti semula
+```{r}
+lulusan_sd_longer <- lulusan_sd_wider %>%
+  pivot_longer(c(-KODE_KABB, -NAMA_KAB),
+               names_to = "jk",
+               values_to = "jumlah")
+
+lulusan_sd_longer
+```
+
+---
+class: left, middle
+
+background-image:url(images/tks.png)
+background-size: cover
+
+
+
