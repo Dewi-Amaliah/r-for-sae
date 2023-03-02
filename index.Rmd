@@ -187,7 +187,7 @@ background-size: cover
 library(foreign)
 
 # membaca data, disimpan di dalam objek bernama sak
-sak <- read.dbf(here::here("data/Sakernas 2016 pakai.dbf"))
+sak <- read.dbf(here::here("data/Sakernas 2016 sample.dbf")) 
 glimpse(sak)
 ```
 
