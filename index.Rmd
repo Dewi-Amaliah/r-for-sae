@@ -478,7 +478,8 @@ background-size: cover
 
 ```{r}
 lulusan_sd_wider <- lulusan_sd_joined %>%
-  pivot_wider( names_from = "jk", values_from = "jumlah")
+  pivot_wider( names_from = "jk", values_from = "jumlah") %>%
+  select(-`NA`)
 
 lulusan_sd_wider
 ```
@@ -488,7 +489,7 @@ lulusan_sd_wider
 lulusan_sd_longer <- lulusan_sd_wider %>%
   pivot_longer(c(-KODE_KABB, -NAMA_KAB),
                names_to = "jk",
-               values_to = "jumlah")
+               values_to = "jumlah") 
 
 lulusan_sd_longer
 ```

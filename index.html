@@ -1425,25 +1425,26 @@ background-size: cover
 
 ```r
 lulusan_sd_wider &lt;- lulusan_sd_joined %&gt;%
-  pivot_wider( names_from = "jk", values_from = "jumlah")
+  pivot_wider( names_from = "jk", values_from = "jumlah") %&gt;%
+  select(-`NA`)
 
 lulusan_sd_wider
 ```
 
 ```
-## # A tibble: 511 × 5
-##    KODE_KABB NAMA_KAB          wanita  pria  `NA`
-##    &lt;fct&gt;     &lt;fct&gt;              &lt;int&gt; &lt;int&gt; &lt;int&gt;
-##  1 3520      MAGETAN             4481    NA    NA
-##  2 3517      JOMBANG               NA 10227    NA
-##  3 1571      JAMBI                 NA  1368    NA
-##  4 6171      PONTIANAK             NA    NA    NA
-##  5 5108      BULELENG            2388   894    NA
-##  6 1273      PEMATANG SIANTAR    1122  1064    NA
-##  7 1204      TAPANULI TENGAH      827    NA    NA
-##  8 3327      PEMALANG            6745 12290    NA
-##  9 7314      SIDENRENG RAPPANG   2152   863    NA
-## 10 1971      PANGKAL PINANG       534   514    NA
+## # A tibble: 511 × 4
+##    KODE_KABB NAMA_KAB          wanita  pria
+##    &lt;fct&gt;     &lt;fct&gt;              &lt;int&gt; &lt;int&gt;
+##  1 3520      MAGETAN             4481    NA
+##  2 3517      JOMBANG               NA 10227
+##  3 1571      JAMBI                 NA  1368
+##  4 6171      PONTIANAK             NA    NA
+##  5 5108      BULELENG            2388   894
+##  6 1273      PEMATANG SIANTAR    1122  1064
+##  7 1204      TAPANULI TENGAH      827    NA
+##  8 3327      PEMALANG            6745 12290
+##  9 7314      SIDENRENG RAPPANG   2152   863
+## 10 1971      PANGKAL PINANG       534   514
 ## # … with 501 more rows
 ```
 
@@ -1453,26 +1454,26 @@ lulusan_sd_wider
 lulusan_sd_longer &lt;- lulusan_sd_wider %&gt;%
   pivot_longer(c(-KODE_KABB, -NAMA_KAB),
                names_to = "jk",
-               values_to = "jumlah")
+               values_to = "jumlah") 
 
 lulusan_sd_longer
 ```
 
 ```
-## # A tibble: 1,533 × 4
+## # A tibble: 1,022 × 4
 ##    KODE_KABB NAMA_KAB  jk     jumlah
 ##    &lt;fct&gt;     &lt;fct&gt;     &lt;chr&gt;   &lt;int&gt;
 ##  1 3520      MAGETAN   wanita   4481
 ##  2 3520      MAGETAN   pria       NA
-##  3 3520      MAGETAN   NA         NA
-##  4 3517      JOMBANG   wanita     NA
-##  5 3517      JOMBANG   pria    10227
-##  6 3517      JOMBANG   NA         NA
-##  7 1571      JAMBI     wanita     NA
-##  8 1571      JAMBI     pria     1368
-##  9 1571      JAMBI     NA         NA
-## 10 6171      PONTIANAK wanita     NA
-## # … with 1,523 more rows
+##  3 3517      JOMBANG   wanita     NA
+##  4 3517      JOMBANG   pria    10227
+##  5 1571      JAMBI     wanita     NA
+##  6 1571      JAMBI     pria     1368
+##  7 6171      PONTIANAK wanita     NA
+##  8 6171      PONTIANAK pria       NA
+##  9 5108      BULELENG  wanita   2388
+## 10 5108      BULELENG  pria      894
+## # … with 1,012 more rows
 ```
 
 ---
