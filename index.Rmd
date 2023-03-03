@@ -108,6 +108,7 @@ use_panelset()
 # install package terlebih dahulu
 install.packages("foreign")
 install.packages("tidyverse")
+install.packages("survey")
 ```
 
 
@@ -115,6 +116,7 @@ install.packages("tidyverse")
 # load package
 library(foreign)
 library(tidyverse)
+library(survey)
 ```
 
 
