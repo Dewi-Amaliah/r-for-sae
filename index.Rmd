@@ -227,7 +227,7 @@ background-size: cover
 sak_select <- sak %>%
   select(TAHUN, FINAL_WEIG, PROP, KODE_KABB, KODE_KEC,
          KODE_DESA, KLASIFIKAS, B4_K4, B4_K6, B4_K8, B5_R1A,
-         B4_K7, B5_R5A1, B5_R5B, B5_R34)
+         B4_K7, B5_R5A1, B5_R5B, B5_R34, STRATA_SAK)
 
 glimpse(sak_select)
 ```
@@ -456,7 +456,8 @@ sd_samp <- sak_leveled %>%
   filter(ijazah == "SD setara")
 
 svy.dat <- svydesign(ids=~1, data=sd_samp,
-                     weights=sd_samp$penimbang)
+                     weights=sd_samp$penimbang, strata = ~sd_samp$STRATA_SAK, 
+                     nest=TRUE, survey.lonely.psu = "adjust")
 
 lulusan_sd_pop <- svytable(~kode_kab + jk, 
                      design=svy.dat) %>%
